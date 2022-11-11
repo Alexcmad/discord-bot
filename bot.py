@@ -85,8 +85,8 @@ def total_count(user):
 
 def stats(user):
     is_user(user)
-    l = f"{user.mention}'s Stats:\nTotal Pushups Done: {total_pushups(user)}\nL's Taken: {total_L(user)}\nTimes Counted: {total_count(user)}\nLatest Quote: {get_quote(user)}"
-    print(f"Viewing stats: {l}")
+    l = f"{user.mention}'s Profile:\nTotal Pushups Done: {total_pushups(user)}\nL's Taken: {total_L(user)}\nTimes Counted: {total_count(user)}\nLatest Quote: {get_quote(user)}"
+    print(f"Viewing profile: {l}")
     return l
 
 
@@ -136,7 +136,7 @@ def counted(user):
 
 def quote(message,user):
     is_user(user)
-    users.update({'quote':message},User.ID==get_ID(user))
+    users.update({'quote':f'_{str.title(message)}_'},User.ID==get_ID(user))
     print(f'has a new Quote for: {message}')
 
 def get_quote(user):

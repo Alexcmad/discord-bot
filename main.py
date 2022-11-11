@@ -6,6 +6,7 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
 bird = 229401751281729536
+prefix = '.'
 
 
 @client.event
@@ -45,26 +46,26 @@ async def on_message(message):
     if msg.startswith(".hello"):
         await channel.send("Hello!")
 
-    elif msg.startswith('.l'):
+    elif msg.startswith(f'{prefix}l'):
         if is_pChat:
             await channel.send(bot.take_L(user))
 
-    elif msg.startswith('.stats'):
+    elif msg.startswith(f'{prefix}stats') or  msg.startswith(f'{prefix}profile'):
         if mentions:
             await channel.send(bot.stats(mentioned))
         else:
             await channel.send(bot.stats(user))
 
-    elif msg.startswith('.setpchat'):
+    elif msg.startswith(f'{prefix}setpchat'):
         await channel.send(bot.set_pChat(channel, server))
 
-    elif msg.startswith('.setcchat'):
+    elif msg.startswith(f'{prefix}setcchat'):
         await channel.send(bot.set_cChat(channel, server))
 
-    elif msg.startswith('.setqchat'):
+    elif msg.startswith(f'{prefix}setqchat'):
         await channel.send(bot.set_qChat(channel, server))
 
-    elif msg.startswith('.qreload'):
+    elif msg.startswith(f'{prefix}qreload'):
         if is_qChat:
             print("Reloading Quotes...")
             async for x in channel.history(oldest_first=True, limit=9999):
@@ -72,9 +73,9 @@ async def on_message(message):
                 m = x.mentions
                 if m:
                     for y in m:
-                        bot.quote(x.content, y)
+                        bot.quote(str.title(x.content), y)
 
-    elif msg.startswith('.creload'):
+    elif msg.startswith(f'{prefix}creload'):
         if is_cChat:
             print("counting Counters...")
             async for x in channel.history(oldest_first=True, limit=9999, after=datetime.datetime(2022, 10, 22)):
@@ -91,7 +92,7 @@ async def on_message(message):
         if not is_cChat:
             if not is_qChat:
                 await message.reply(content="SYM Bird")
-                await message.add_reaction('😑')
+                await message.add_reaction('🐔')
 
 
 
