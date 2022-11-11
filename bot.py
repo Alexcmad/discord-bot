@@ -137,7 +137,7 @@ def counted(user):
 def quote(message,user):
     is_user(user)
     users.update({'quote':f'_{str.title(message)}_'},User.ID==get_ID(user))
-    print(f'has a new Quote for: {message}')
+    print(f'has a new Quote: {message}')
 
 def get_quote(user):
     return users.search(User.ID==get_ID(user))[0].get('quote')
