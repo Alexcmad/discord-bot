@@ -2,6 +2,7 @@ from tinydb import TinyDB, Query
 import tinydb.operations as dbop
 import discord
 
+
 TOKEN='MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
 
 db = TinyDB('userbase.json')
@@ -85,9 +86,14 @@ def total_count(user):
 
 def stats(user):
     is_user(user)
+    embed = discord.Embed(title=f"{get_name(user)}'s Profile")
+    embed.add_field(name="Pushups Done", value=total_pushups(user), inline=False)
+    embed.add_field(name="L's", value=total_L(user), inline=False)
+    embed.add_field(name = "Times Counted", value= total_count(user), inline=False)
+    embed.add_field(name = "Latest Quote", value=get_quote(user), inline=False)
     l = f"{user.mention}'s Profile:\nTotal Pushups Done: {total_pushups(user)}\nL's Taken: {total_L(user)}\nTimes Counted: {total_count(user)}\nLatest Quote: {get_quote(user)}"
-    print(f"Viewing profile: {l}")
-    return l
+    print(f"'s Profile: {l}")
+    return embed
 
 
 def set_pChat(channel, server):

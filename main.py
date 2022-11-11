@@ -52,9 +52,9 @@ async def on_message(message):
 
     elif msg.startswith(f'{prefix}stats') or  msg.startswith(f'{prefix}profile'):
         if mentions:
-            await channel.send(bot.stats(mentioned))
+            await channel.send(embed=bot.stats(mentioned))
         else:
-            await channel.send(bot.stats(user))
+            await channel.send(embed=bot.stats(user))
 
     elif msg.startswith(f'{prefix}setpchat'):
         await channel.send(bot.set_pChat(channel, server))
@@ -91,7 +91,7 @@ async def on_message(message):
     if user.id == bird:
         if not is_cChat:
             if not is_qChat:
-                await message.reply(content="SYM Bird")
+                #await message.reply(content="SYM Bird")
                 await message.add_reaction('🐔')
 
 
