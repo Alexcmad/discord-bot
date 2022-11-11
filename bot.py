@@ -2,7 +2,7 @@ from tinydb import TinyDB, Query
 import tinydb.operations as dbop
 import discord
 
-TOKEN='MTA0MDEyNTQ0MTQyOTczMzM3Ng.GIBsQs.T-O6FeIMZczW930DbtZP0YND1I26RH3MwvuA-g'
+TOKEN='MTA0MDEyNTQ0MTQyOTczMzM3Ng.GFOD1h.tgVHmI-bWELEfVXMwoW5siCMUlPWh5hNcxVvoY'
 
 db = TinyDB('userbase.json')
 
