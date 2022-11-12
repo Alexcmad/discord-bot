@@ -37,12 +37,7 @@ async def on_message(message):
     is_pChat = bot.is_pChat(channel)
     is_cChat = bot.is_cChat(channel)
     is_qChat = bot.is_qChat(channel)
-    """
-    print(f"is_pChat = {is_pChat}")
-    print(f"is_cChat = {is_cChat}")
-    print(f"is_qChat = {is_qChat}")
-    print(f"Message: {msg} Sent By: {message.author}")
-    """
+
 
     if msg.startswith(".hello"):
         await channel.send("Hello!")
@@ -51,7 +46,7 @@ async def on_message(message):
         if is_pChat:
             await channel.send(bot.take_L(user))
 
-    elif msg.startswith(f'{prefix}stats') or  msg.startswith(f'{prefix}profile'):
+    elif msg.startswith(f'{prefix}stats') or msg.startswith(f'{prefix}profile'):
         if mentions:
             await channel.send(embed=bot.stats(mentioned))
         else:
@@ -66,41 +61,43 @@ async def on_message(message):
     elif msg.startswith(f'{prefix}setqchat'):
         await channel.send(bot.set_qChat(channel, server))
 
-    elif msg.startswith(f'{prefix}qreload'):
-        if is_qChat:
-            print("Reloading Quotes...")
-            bot.users.update({'quote':[]})
-            async for x in channel.history(oldest_first=True, limit=9999):
-                print(x.content)
-                m = x.mentions
-                if m:
-                    for y in m:
-                        bot.quote(str.title(x.content), y)
-
-    elif msg.startswith(f'{prefix}creload'):
-        if is_cChat:
-            print("counting Counters...")
-            async for x in channel.history(oldest_first=True, limit=9999, after=datetime.datetime(2022, 10, 22)):
-                bot.counted(x.author)
-
-    elif msg.startswith(f'{prefix}allstop'):
-        if user.id == alex:
-            exit()
-        else:
-            channel.send('ur not that guy pal')
 
     if is_cChat:
         bot.counted(user)
 
     if is_qChat:
         if mentions:
-            bot.quote(msg, mentioned)
+            bot.quote(message.content, mentioned)
 
     if user.id == bird:
         if not is_cChat:
             if not is_qChat:
-                #await message.reply(content="SYM Bird")
+                # await message.reply(content="SYM Bird")
                 await message.add_reaction('🐔')
+
+
+    elif user.id == alex:
+        if msg.startswith(f'{prefix}qreload'):
+            if is_qChat:
+                print("Reloading Quotes...")
+                bot.users.update({'quote': []})
+                async for x in channel.history(oldest_first=True, limit=9999):
+                    m = x.mentions
+                    if m:
+                        for y in m:
+                            bot.quote(x.content, y)
+
+        elif msg.startswith(f'{prefix}creload'):
+            if is_cChat:
+                print("counting Counters...")
+                async for x in channel.history(oldest_first=True, limit=9999, after=datetime.datetime(2022, 10, 22)):
+                    bot.counted(x.author)
+
+        elif msg.startswith(f'{prefix}allstop'):
+            exit()
+    else:
+        await channel.send('ur not that guy pal')
+
 
 
 

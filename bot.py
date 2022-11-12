@@ -144,7 +144,7 @@ def counted(user):
 
 def quote(message,user):
     is_user(user)
-    users.update(dbop.add(('quote'),[f'_{str.title(message)}_']),User.ID==get_ID(user))
+    users.update(dbop.add(('quote'),[f'_{message}_']),User.ID==get_ID(user))
     print(f'has a new Quote: {message}')
 
 def get_quote(user):
