@@ -43,7 +43,7 @@ async def on_message(message):
     if msg.startswith(".hello"):
         await channel.send("Hello!")
 
-    elif msg.startswith(f'{prefix}l'):
+    elif msg.endswith(f'{prefix}l'):
         if is_pChat:
             await channel.send(bot.take_L(user))
 
@@ -65,9 +65,21 @@ async def on_message(message):
     elif msg.startswith(f'{prefix}pushup'):
         await channel.send(bot.pushup(user))
 
-    elif msg.startswith(f'{prefix}addsum'):
+    elif msg.startswith(f'{prefix}link lol'):
         print('loladd')
-        await channel.send(bot.add_summoner(user,message.content[8:]))
+        await channel.send(bot.add_summoner(user,message.content[9:]))
+
+    elif msg.startswith(f'{prefix}lol stats'):
+        if mentions:
+            try:
+                await channel.send(embed=bot.lol_stats(mentioned))
+            except:
+                await channel.send(bot.lol_stats(mentioned))
+        else:
+            try:
+                await channel.send(embed = bot.lol_stats(user))
+            except:
+                await channel.send(bot.lol_stats(user))
 
 
     if is_cChat:

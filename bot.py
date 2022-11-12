@@ -4,12 +4,8 @@ import discord
 from riotwatcher import LolWatcher
 from random import choice
 
-
-
-
-
-TOKEN='MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
-RIOT='RGAPI-2eba8564-5156-4000-8bf3-d9e9fe43c6ad'
+TOKEN = 'MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
+RIOT = 'RGAPI-2eba8564-5156-4000-8bf3-d9e9fe43c6ad'
 region = 'NA1'
 watcher = LolWatcher(api_key=RIOT)
 
@@ -26,7 +22,7 @@ pushupCount = 10
 
 def is_user(user):
     if users.search(User.ID == get_ID(user)):
-        print(f"{get_name(user)}",end =' ')
+        print(f"{get_name(user)}", end=' ')
         return
     else:
         print("User not Found. Adding.")
@@ -40,8 +36,8 @@ def add_user(user):
             'count': 0,
             'L': 0,
             'counted': 0,
-            'quote':[],
-            'pID':None
+            'quote': [],
+            'pID': None
             }
 
 
@@ -84,6 +80,7 @@ def total_pushups(user):
     l = users.search(User.ID == get_ID(user))[0].get('count')
     return l
 
+
 def due(user):
     l = users.search(User.ID == get_ID(user))[0].get('due')
     return l
@@ -92,17 +89,18 @@ def due(user):
 def pushup(user):
     amount = pushupCount
     users.update_multiple([
-        (dbop.add('count',amount),User.ID==get_ID(user)),
-        (dbop.subtract('due',amount),User.ID==get_ID(user))
+        (dbop.add('count', amount), User.ID == get_ID(user)),
+        (dbop.subtract('due', amount), User.ID == get_ID(user))
     ])
-    if users.search(User.ID ==  get_ID(user))[0].get('due')<0:
-        users.update({'due':0},User.ID==get_ID(user))
+    if users.search(User.ID == get_ID(user))[0].get('due') < 0:
+        users.update({'due': 0}, User.ID == get_ID(user))
     return f'{user.mention} did {amount} pushups!'
 
 
 def total_L(user):
     l = users.search(User.ID == get_ID(user))[0].get('L')
     return l
+
 
 def total_count(user):
     l = users.search(User.ID == get_ID(user))[0].get('counted')
@@ -115,50 +113,56 @@ def stats(user):
     embed.add_field(name="Pushups Done", value=total_pushups(user), inline=False)
     embed.add_field(name="Pushups Due", value=due(user), inline=False)
     embed.add_field(name="L's", value=total_L(user), inline=False)
-    embed.add_field(name = "Times Counted", value= total_count(user), inline=False)
-    embed.add_field(name = "Random Quote", value=get_quote(user), inline=False)
-    #l = f"{user.mention}'s Profile:\nTotal Pushups Done: {total_pushups(user)}\nL's Taken: {total_L(user)}\nTimes Counted: {total_count(user)}\nLatest Quote: {get_quote(user)}"
-    #print(f"'s Profile: {l}")
+    embed.add_field(name="Times Counted", value=total_count(user), inline=False)
+    embed.add_field(name="Random Quote", value=get_quote(user), inline=False)
+    # l = f"{user.mention}'s Profile:\nTotal Pushups Done: {total_pushups(user)}\nL's Taken: {total_L(user)}\nTimes Counted: {total_count(user)}\nLatest Quote: {get_quote(user)}"
+    # print(f"'s Profile: {l}")
     return embed
 
 
 def set_pChat(channel, server):
-    guilds.update({'pChat':get_ID(channel)}, Server.ID==get_ID(server))
+    guilds.update({'pChat': get_ID(channel)}, Server.ID == get_ID(server))
     print(f"{get_name(channel)} set as pushup chat")
     return 'Current channel set as Pushup Chat'
 
+
 def is_pChat(channel):
-    if guilds.search(Server.pChat==get_ID(channel)):
+    if guilds.search(Server.pChat == get_ID(channel)):
         return True
     else:
         return False
 
+
 def set_cChat(channel, server):
-    guilds.update({'cChat':get_ID(channel)}, Server.ID==get_ID(server))
+    guilds.update({'cChat': get_ID(channel)}, Server.ID == get_ID(server))
     print(f"{get_name(channel)} set as counting chat")
     return 'Current channel set as Count Chat'
 
+
 def is_cChat(channel):
-    if guilds.search(Server.cChat==get_ID(channel)):
+    if guilds.search(Server.cChat == get_ID(channel)):
         return True
     else:
         return False
 
 
-def set_qChat(channel,server):
+def set_qChat(channel, server):
     guilds.update({'qChat': get_ID(channel)}, Server.ID == get_ID(server))
     print(f"{get_name(channel)} set as quote chat")
     return 'Current channel set as Quote Chat'
 
+
 def is_qChat(channel):
-    if guilds.search(Server.qChat==get_ID(channel)):
+    if guilds.search(Server.qChat == get_ID(channel)):
         return True
     else:
         return False
 
+
 def get_qChat(server):
-    l = guilds.search(Server.ID==get_ID(server))[0].get("qChat")
+    l = guilds.search(Server.ID == get_ID(server))[0].get("qChat")
     return l
+
 
 def counted(user):
     is_user(user)
@@ -166,27 +170,54 @@ def counted(user):
     print('Counted')
     return
 
-def quote(message,user):
+
+def quote(message, user):
     is_user(user)
-    users.update(dbop.add(('quote'),[f'_{message}_']),User.ID==get_ID(user))
+    users.update(dbop.add(('quote'), [f'_{message}_']), User.ID == get_ID(user))
     print(f'has a new Quote: {message}')
+
 
 def get_quote(user):
     try:
-        return choice(users.search(User.ID==get_ID(user))[0].get('quote'))
+        return choice(users.search(User.ID == get_ID(user))[0].get('quote'))
     except:
         return "Bro has no quotes 😐"
 
 
-def add_summoner(user,summoner_name):
+def add_summoner(user, summoner_name):
     try:
-        pID = watcher.summoner.by_name(region=region,summoner_name=summoner_name)['puuid']
+        pID = watcher.summoner.by_name(region=region, summoner_name=summoner_name)['puuid']
     except:
         return 'Something went wrong'
 
-    users.update({'pID':pID},User.ID==get_ID(user))
+    users.update({'pID': pID}, User.ID == get_ID(user))
     return f'Successfully Linked to {summoner_name}'
 
 
 def past_matches(user):
     userid = get_ID(user)
+    pID = users.search(User.ID == userid)[0].get('pID')
+    if not pID:
+        return 'Not Linked to Riot'
+
+
+def get_summoner(pID):
+    return watcher.summoner.by_puuid(region=region, encrypted_puuid=pID)['name']
+
+
+def get_level(pID):
+    return watcher.summoner.by_puuid(region=region, encrypted_puuid=pID)['summonerLevel']
+
+
+def lol_stats(user):
+    is_user(user)
+    userid = get_ID(user)
+    pID = users.search(User.ID == userid)[0].get('pID')
+    if not pID:
+        return f'Not Linked to Riot. \nDo:   .link lol [Summoner Name]'
+
+    embed = discord.Embed(title=f"{get_name(user)}'s League Profile")
+    embed.add_field(name="Summoner Name", value=get_summoner(pID), inline=False)
+    embed.add_field(name="Summoner Level", value=get_level(pID), inline=False)
+
+    return embed
