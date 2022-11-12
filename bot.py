@@ -172,7 +172,10 @@ def quote(message,user):
     print(f'has a new Quote: {message}')
 
 def get_quote(user):
-    return choice(users.search(User.ID==get_ID(user))[0].get('quote'))
+    try:
+        return choice(users.search(User.ID==get_ID(user))[0].get('quote'))
+    except:
+        return "Bro has no quotes 😐"
 
 
 def add_summoner(user,summoner_name):
