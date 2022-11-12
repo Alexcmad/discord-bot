@@ -5,7 +5,7 @@ from riotwatcher import LolWatcher
 from random import choice
 
 TOKEN = 'MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
-RIOT = 'RGAPI-2eba8564-5156-4000-8bf3-d9e9fe43c6ad'
+RIOT = 'RGAPI-60ba0e48-a2e3-4512-92fc-411db832d133'
 region = 'NA1'
 watcher = LolWatcher(api_key=RIOT)
 
