@@ -182,7 +182,7 @@ def add_summoner(user,summoner_name):
         return 'Something went wrong'
 
     users.update({'pID':pID},User.ID==get_ID(user))
-    return 'Successfully Added'
+    return f'Successfully Linked to {summoner_name}'
 
 
 def past_matches(user):

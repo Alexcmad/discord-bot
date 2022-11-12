@@ -26,7 +26,7 @@ async def on_message(message):
         return
     # bot.is_user(user)
     msg = str.lower(message.content)
-    print(msg)
+    #print(msg)
     channel = message.channel
     server = message.guild
     mentions = message.mentions
@@ -67,7 +67,7 @@ async def on_message(message):
 
     elif msg.startswith(f'{prefix}addsum'):
         print('loladd')
-        await channel.send(bot.add_summoner(user,message.content[7:]))
+        await channel.send(bot.add_summoner(user,message.content[8:]))
 
 
     if is_cChat:
