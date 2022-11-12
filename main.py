@@ -6,6 +6,7 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
 bird = 229401751281729536
+alex = 298206761587048448
 prefix = '.'
 
 
@@ -68,6 +69,7 @@ async def on_message(message):
     elif msg.startswith(f'{prefix}qreload'):
         if is_qChat:
             print("Reloading Quotes...")
+            bot.users.update({'quote':[]})
             async for x in channel.history(oldest_first=True, limit=9999):
                 print(x.content)
                 m = x.mentions
@@ -80,6 +82,12 @@ async def on_message(message):
             print("counting Counters...")
             async for x in channel.history(oldest_first=True, limit=9999, after=datetime.datetime(2022, 10, 22)):
                 bot.counted(x.author)
+
+    elif msg.startswith(f'{prefix}allstop'):
+        if user.id == alex:
+            exit()
+        else:
+            channel.send('ur not that guy pal')
 
     if is_cChat:
         bot.counted(user)

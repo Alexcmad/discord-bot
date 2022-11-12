@@ -1,9 +1,11 @@
 from tinydb import TinyDB, Query
 import tinydb.operations as dbop
 import discord
+from random import choice
 
 
 TOKEN='MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
+RIOT='RGAPI-45de715f-4c44-4760-8c96-baa999dc4324'
 
 db = TinyDB('userbase.json')
 
@@ -32,7 +34,7 @@ def add_user(user):
             'count': 0,
             'L': 0,
             'counted': 0,
-            'quote':None}
+            'quote':[]}
 
 
 def is_server(server):
@@ -90,7 +92,7 @@ def stats(user):
     embed.add_field(name="Pushups Done", value=total_pushups(user), inline=False)
     embed.add_field(name="L's", value=total_L(user), inline=False)
     embed.add_field(name = "Times Counted", value= total_count(user), inline=False)
-    embed.add_field(name = "Latest Quote", value=get_quote(user), inline=False)
+    embed.add_field(name = "Random Quote", value=get_quote(user), inline=False)
     l = f"{user.mention}'s Profile:\nTotal Pushups Done: {total_pushups(user)}\nL's Taken: {total_L(user)}\nTimes Counted: {total_count(user)}\nLatest Quote: {get_quote(user)}"
     print(f"'s Profile: {l}")
     return embed
@@ -142,9 +144,9 @@ def counted(user):
 
 def quote(message,user):
     is_user(user)
-    users.update({'quote':f'_{str.title(message)}_'},User.ID==get_ID(user))
+    users.update(dbop.add(('quote'),[f'_{str.title(message)}_']),User.ID==get_ID(user))
     print(f'has a new Quote: {message}')
 
 def get_quote(user):
-    return users.search(User.ID==get_ID(user))[0].get('quote')
+    return choice(users.search(User.ID==get_ID(user))[0].get('quote'))
 
