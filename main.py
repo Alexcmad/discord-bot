@@ -26,6 +26,7 @@ async def on_message(message):
         return
     # bot.is_user(user)
     msg = str.lower(message.content)
+    print(msg)
     channel = message.channel
     server = message.guild
     mentions = message.mentions
@@ -61,6 +62,13 @@ async def on_message(message):
     elif msg.startswith(f'{prefix}setqchat'):
         await channel.send(bot.set_qChat(channel, server))
 
+    elif msg.startswith(f'{prefix}pushup'):
+        await channel.send(bot.pushup(user))
+
+    elif msg.startswith(f'{prefix}addsum'):
+        print('loladd')
+        await channel.send(bot.add_summoner(user,message.content[7:]))
+
 
     if is_cChat:
         bot.counted(user)
@@ -95,8 +103,6 @@ async def on_message(message):
 
         elif msg.startswith(f'{prefix}allstop'):
             exit()
-
-
 
 
 

@@ -1,11 +1,17 @@
 from tinydb import TinyDB, Query
 import tinydb.operations as dbop
 import discord
+from riotwatcher import LolWatcher
 from random import choice
 
 
+
+
+
 TOKEN='MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
-RIOT='RGAPI-45de715f-4c44-4760-8c96-baa999dc4324'
+RIOT='RGAPI-2eba8564-5156-4000-8bf3-d9e9fe43c6ad'
+region = 'NA1'
+watcher = LolWatcher(api_key=RIOT)
 
 db = TinyDB('userbase.json')
 
@@ -34,7 +40,9 @@ def add_user(user):
             'count': 0,
             'L': 0,
             'counted': 0,
-            'quote':[]}
+            'quote':[],
+            'pID':None
+            }
 
 
 def is_server(server):
@@ -65,7 +73,7 @@ def get_name(obj):
 def take_L(user):
     is_user(user)
     users.update_multiple([
-        (dbop.add('count', pushupCount), User.ID == get_ID(user)),
+        (dbop.add('due', pushupCount), User.ID == get_ID(user)),
         (dbop.add('L', 1), User.ID == get_ID(user))])
     msg = f'{user.mention} has to do {pushupCount} pushups!'
     print("Took an L")
@@ -75,6 +83,21 @@ def take_L(user):
 def total_pushups(user):
     l = users.search(User.ID == get_ID(user))[0].get('count')
     return l
+
+def due(user):
+    l = users.search(User.ID == get_ID(user))[0].get('due')
+    return l
+
+
+def pushup(user):
+    amount = pushupCount
+    users.update_multiple([
+        (dbop.add('count',amount),User.ID==get_ID(user)),
+        (dbop.subtract('due',amount),User.ID==get_ID(user))
+    ])
+    if users.search(User.ID ==  get_ID(user))[0].get('due')<0:
+        users.update({'due':0},User.ID==get_ID(user))
+    return f'{user.mention} did {amount} pushups!'
 
 
 def total_L(user):
@@ -90,11 +113,12 @@ def stats(user):
     is_user(user)
     embed = discord.Embed(title=f"{get_name(user)}'s Profile")
     embed.add_field(name="Pushups Done", value=total_pushups(user), inline=False)
+    embed.add_field(name="Pushups Due", value=due(user), inline=False)
     embed.add_field(name="L's", value=total_L(user), inline=False)
     embed.add_field(name = "Times Counted", value= total_count(user), inline=False)
     embed.add_field(name = "Random Quote", value=get_quote(user), inline=False)
-    l = f"{user.mention}'s Profile:\nTotal Pushups Done: {total_pushups(user)}\nL's Taken: {total_L(user)}\nTimes Counted: {total_count(user)}\nLatest Quote: {get_quote(user)}"
-    print(f"'s Profile: {l}")
+    #l = f"{user.mention}'s Profile:\nTotal Pushups Done: {total_pushups(user)}\nL's Taken: {total_L(user)}\nTimes Counted: {total_count(user)}\nLatest Quote: {get_quote(user)}"
+    #print(f"'s Profile: {l}")
     return embed
 
 
@@ -150,3 +174,16 @@ def quote(message,user):
 def get_quote(user):
     return choice(users.search(User.ID==get_ID(user))[0].get('quote'))
 
+
+def add_summoner(user,summoner_name):
+    try:
+        pID = watcher.summoner.by_name(region=region,summoner_name=summoner_name)['puuid']
+    except:
+        return 'Something went wrong'
+
+    users.update({'pID':pID},User.ID==get_ID(user))
+    return 'Successfully Added'
+
+
+def past_matches(user):
+    userid = get_ID(user)
