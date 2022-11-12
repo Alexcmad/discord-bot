@@ -95,8 +95,7 @@ async def on_message(message):
 
         elif msg.startswith(f'{prefix}allstop'):
             exit()
-    else:
-        await channel.send('ur not that guy pal')
+
 
 
 
