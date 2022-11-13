@@ -127,7 +127,7 @@ async def on_message(message):
 @discord.ext.tasks.loop(minutes=2.5, reconnect=True)
 async def lol_reload():
     pushup_channel = client.get_channel(hearth_p)
-    print(pushup_channel)
+    #print(pushup_channel)
     now = datetime.datetime.now()
     current_time = now.strftime("%H:%M:%S")
     print(f"<{current_time}> Searching for Games...")
