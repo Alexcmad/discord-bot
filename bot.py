@@ -51,12 +51,20 @@ def add_user(user):
     return {'ID': get_ID(user),
             'name': get_name(user),
             'count': 0,
+            'due':0,
             'L': 0,
             'counted': 0,
             'quote': [],
             'pID': None,
-            "l_max_kill": 0, "l_kills": 0, "l_deaths": 0, "l_wins": 0, "l_games": 0, "l_losses": 0, "l_win_streak": 0,
-            "l_loss_streak": 0, "l_pentas": 0
+            "l_max_kill": 0,
+            "l_kills": 0,
+            "l_deaths": 0,
+            "l_wins": 0,
+            "l_games": 0,
+            "l_losses": 0,
+            "l_win_streak": 0,
+            "l_loss_streak": 0,
+            "l_pentas": 0
             }
 
 
@@ -296,7 +304,7 @@ def lol_reload():
             player = get_player(game, user["pID"])
             if not get_win(player):
                 list.append(take_L(user))
-            return list
+    return list
 
 
 def update_20():
