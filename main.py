@@ -133,7 +133,8 @@ async def lol_reload():
     print(f"<{current_time}> Searching for Games...")
     reload = await bot.lol_reload()
     if reload:
-        await pushup_channel.send(reload)
+        for x in reload:
+            await pushup_channel.send(x)
 
 
 client.run(bot.TOKEN)

@@ -98,7 +98,7 @@ def take_L(user):
         users.update_multiple([
             (dbop.add('due', pushupCount), User.ID == ID),
             (dbop.add('L', 1), User.ID == ID)])
-        msg = f'***🚨L DETECTED🚨*** \n<@{ID}> Has to do {pushupCount} )ushups!'
+        msg = f'***🚨L DETECTED🚨*** \n<@{ID}> Has to do {pushupCount} Pushups!'
     print(f'{msg} THIS IS A BOT DETECTED L')
     return msg
 
@@ -280,6 +280,7 @@ def get_last_20_game(pID):
 
 @to_thread
 def lol_reload():
+    list = []
     for user in users.all():
         if get_last_20_game(user['pID']):
             lastGame = get_last_20_game(user['pID'])[0]
@@ -294,9 +295,8 @@ def lol_reload():
             player_update(game, user["pID"])
             player = get_player(game, user["pID"])
             if not get_win(player):
-                return take_L(user)
-            else:
-                return False
+                list.append(take_L(user))
+            return list
 
 
 def update_20():
