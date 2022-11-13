@@ -22,7 +22,7 @@ def to_thread(func: typing.Callable) -> typing.Coroutine:
 
 
 TOKEN = 'MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
-RIOT = 'RGAPI-60ba0e48-a2e3-4512-92fc-411db832d133'
+RIOT = 'RGAPI-66b4781f-fc21-46a6-9c99-692eb0a218e3'
 region = 'NA1'
 watcher = LolWatcher(api_key=RIOT)
 
@@ -356,10 +356,10 @@ def player_update(game, pID):
         users.update(dbop.increment('l_wins'), User.pID == pID)
         users.update(dbop.increment('l_win_streak'), User.pID == pID)
         users.update({'l_loss_streak': 0}, User.pID == pID)
-    else:
+    elif not win:
         users.update(dbop.increment('l_losses'), User.pID == pID)
         users.update({'l_win_streak': 0}, User.pID == pID)
-        users.update(dbop.increment('l_win_streak'), User.pID == pID)
+        users.update(dbop.increment('l_loss_streak'), User.pID == pID)
 
 
 def get_usr_kills(user):
