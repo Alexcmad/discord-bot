@@ -91,14 +91,14 @@ def take_L(user):
         users.update_multiple([
             (dbop.add('due', pushupCount), User.ID == get_ID(user)),
             (dbop.add('L', 1), User.ID == get_ID(user))])
-        msg = f'{user.mention} has to do {pushupCount} pushups!'
+        msg = f'{user.mention} Has to do {pushupCount} Pushups!'
         return msg
     except:
         ID = user.get('ID')
         users.update_multiple([
             (dbop.add('due', pushupCount), User.ID == ID),
             (dbop.add('L', 1), User.ID == ID)])
-        msg = f'L DETECTED LMAO <@{ID}> has to do {pushupCount} pushups!'
+        msg = f'***🚨L DETECTED🚨*** \n<@{ID}> Has to do {pushupCount} )ushups!'
     print(f'{msg} THIS IS A BOT DETECTED L')
     return msg
 
