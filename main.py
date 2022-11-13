@@ -13,7 +13,7 @@ alex = 298206761587048448
 prefix = '.'
 hearth_p = 832504799533596673
 
-pushup_channel = client.get_channel(hearth_p)
+
 
 @client.event
 async def on_ready():
@@ -126,6 +126,8 @@ async def on_message(message):
 
 @discord.ext.tasks.loop(minutes=2.5, reconnect=True)
 async def lol_reload():
+    pushup_channel = client.get_channel(hearth_p)
+    print(pushup_channel)
     now = datetime.datetime.now()
     current_time = now.strftime("%H:%M:%S")
     print(f"<{current_time}> Searching for Games...")
