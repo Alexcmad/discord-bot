@@ -54,7 +54,9 @@ def add_user(user):
             'L': 0,
             'counted': 0,
             'quote': [],
-            'pID': None
+            'pID': None,
+            "l_max_kill": 0, "l_kills": 0, "l_deaths": 0, "l_wins": 0, "l_games": 0, "l_losses": 0, "l_win_streak": 0,
+            "l_loss_streak": 0, "l_pentas": 0
             }
 
 
@@ -210,6 +212,7 @@ def get_quote(user):
 
 
 def add_summoner(user, summoner_name):
+    is_user(user)
     try:
         pID = watcher.summoner.by_name(region=region, summoner_name=summoner_name)['puuid']
     except:
