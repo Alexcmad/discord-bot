@@ -128,7 +128,7 @@ async def on_message(message):
 async def lol_reload():
     now = datetime.datetime.now()
     current_time = now.strftime("%H:%M:%S")
-    print(f"{current_time}> Searching for Games...")
+    print(f"<{current_time}> Searching for Games...")
     reload = await bot.lol_reload()
     if reload:
         pushup_channel.send(reload)
