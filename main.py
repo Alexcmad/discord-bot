@@ -124,7 +124,7 @@ async def on_message(message):
             bot.update_20()
 
 
-@discord.ext.tasks.loop(minutes=2.5, reconnect=True)
+@discord.ext.tasks.loop(seconds=30, reconnect=True)
 async def lol_reload():
     pushup_channel = client.get_channel(hearth_p)
     #print(pushup_channel)
