@@ -1,4 +1,6 @@
 import datetime
+import time
+
 import discord
 import bot
 
@@ -124,7 +126,9 @@ async def on_message(message):
 
 @discord.ext.tasks.loop(minutes=2.5, reconnect=True)
 async def lol_reload():
-    print("Ping")
+    now = datetime.datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print(f"{current_time}> Searching for Games...")
     reload = await bot.lol_reload()
     if reload:
         pushup_channel.send(reload)
