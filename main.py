@@ -2,18 +2,22 @@ import datetime
 import discord
 import bot
 
+
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
 bird = 229401751281729536
 alex = 298206761587048448
 prefix = '.'
+hearth_p = 832504799533596673
 
+pushup_channel = client.get_channel(hearth_p)
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     guilds = client.guilds
+    lol_reload.start()
 
     for x in guilds:
         bot.is_server(x)
@@ -26,7 +30,7 @@ async def on_message(message):
         return
     # bot.is_user(user)
     msg = str.lower(message.content)
-    #print(msg)
+    # print(msg)
     channel = message.channel
     server = message.guild
     mentions = message.mentions
@@ -38,7 +42,6 @@ async def on_message(message):
     is_pChat = bot.is_pChat(channel)
     is_cChat = bot.is_cChat(channel)
     is_qChat = bot.is_qChat(channel)
-
 
     if msg.startswith(".hello"):
         await channel.send("Hello!")
@@ -66,8 +69,8 @@ async def on_message(message):
         await channel.send(bot.pushup(user))
 
     elif msg.startswith(f'{prefix}link lol'):
-        print('loladd')
-        await channel.send(bot.add_summoner(user,message.content[9:]))
+        #print('loladd')
+        await channel.send(bot.add_summoner(user, message.content[9:]))
 
     elif msg.startswith(f'{prefix}lol stats'):
         if mentions:
@@ -77,10 +80,9 @@ async def on_message(message):
                 await channel.send(bot.lol_stats(mentioned))
         else:
             try:
-                await channel.send(embed = bot.lol_stats(user))
+                await channel.send(embed=bot.lol_stats(user))
             except:
                 await channel.send(bot.lol_stats(user))
-
 
     if is_cChat:
         bot.counted(user)
@@ -116,6 +118,17 @@ async def on_message(message):
         elif msg.startswith(f'{prefix}allstop'):
             exit()
 
+        elif msg.startswith(f'{prefix}update 20'):
+            bot.update_20()
+
+
+@discord.ext.tasks.loop(minutes=2.5, reconnect=True)
+async def lol_reload():
+    print("Ping")
+    reload = await bot.lol_reload()
+    if reload:
+        pushup_channel.send(reload)
 
 
 client.run(bot.TOKEN)
+

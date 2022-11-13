@@ -1,8 +1,25 @@
 from tinydb import TinyDB, Query
 import tinydb.operations as dbop
 import discord
+import discord.ext.tasks
 from riotwatcher import LolWatcher
 from random import choice
+
+import functools
+import typing
+import asyncio
+
+colors = [0xFFE4E1, 0x00FF7F, 0xD8BFD8, 0xDC143C, 0xFF4500, 0xDEB887, 0xADFF2F, 0x800000, 0x4682B4, 0x006400, 0x808080,
+          0xA0522D, 0xF08080, 0xC71585, 0xFFB6C1, 0x00CED1]
+
+
+def to_thread(func: typing.Callable) -> typing.Coroutine:
+    @functools.wraps(func)
+    async def wrapper(*args, **kwargs):
+        return await asyncio.to_thread(func, *args, **kwargs)
+
+    return wrapper
+
 
 TOKEN = 'MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
 RIOT = 'RGAPI-60ba0e48-a2e3-4512-92fc-411db832d133'
@@ -22,7 +39,7 @@ pushupCount = 10
 
 def is_user(user):
     if users.search(User.ID == get_ID(user)):
-        print(f"{get_name(user)}", end=' ')
+        # print(f"{get_name(user)}", end=' ')
         return
     else:
         print("User not Found. Adding.")
@@ -67,12 +84,20 @@ def get_name(obj):
 
 
 def take_L(user):
-    is_user(user)
-    users.update_multiple([
-        (dbop.add('due', pushupCount), User.ID == get_ID(user)),
-        (dbop.add('L', 1), User.ID == get_ID(user))])
-    msg = f'{user.mention} has to do {pushupCount} pushups!'
-    print("Took an L")
+    try:
+        is_user(user)
+        users.update_multiple([
+            (dbop.add('due', pushupCount), User.ID == get_ID(user)),
+            (dbop.add('L', 1), User.ID == get_ID(user))])
+        msg = f'{user.mention} has to do {pushupCount} pushups!'
+        return msg
+    except:
+        ID = user.get('ID')
+        users.update_multiple([
+            (dbop.add('due', pushupCount), User.ID == ID),
+            (dbop.add('L', 1), User.ID == ID)])
+        msg = f'L DETECTED LMAO <@{ID}> has to do {pushupCount} pushups!'
+    print(f'{msg} THIS IS A BOT DETECTED L')
     return msg
 
 
@@ -109,7 +134,7 @@ def total_count(user):
 
 def stats(user):
     is_user(user)
-    embed = discord.Embed(title=f"{get_name(user)}'s Profile")
+    embed = discord.Embed(title=f"{get_name(user)}'s Profile", colour=choice(colors))
     embed.add_field(name="Pushups Done", value=total_pushups(user), inline=False)
     embed.add_field(name="Pushups Due", value=due(user), inline=False)
     embed.add_field(name="L's", value=total_L(user), inline=False)
@@ -216,8 +241,161 @@ def lol_stats(user):
     if not pID:
         return f'Not Linked to Riot. \nDo:   .link lol [Summoner Name]'
 
-    embed = discord.Embed(title=f"{get_name(user)}'s League Profile")
+    embed = discord.Embed(title=f"{get_name(user)}'s League Profile", colour=choice(colors))
     embed.add_field(name="Summoner Name", value=get_summoner(pID), inline=False)
-    embed.add_field(name="Summoner Level", value=get_level(pID), inline=False)
+    embed.add_field(name="Total Games", value=get_usr_games(user), inline=False)
+    embed.add_field(name="Wins", value=get_usr_wins(user), inline=True)
+    embed.add_field(name="Losses", value=get_usr_losses(user), inline=True)
+    embed.add_field(name=u'\u200b', value=u'\u200b')
+    embed.add_field(name="Win Streak", value=get_usr_winstreak(user), inline=True)
+    embed.add_field(name="Loss Streak", value=get_usr_lossstreak(user), inline=True)
+    embed.add_field(name=u'\u200b', value=u'\u200b')
+    embed.add_field(name="Kills", value=get_usr_kills(user), inline=True)
+    embed.add_field(name="Deaths", value=get_usr_deaths(user), inline=True)
+    embed.add_field(name=u'\u200b', value=u'\u200b')
+    embed.add_field(name="Most Kills", value=get_usr_max_kill(user), inline=True)
+    embed.add_field(name="Pentas", value=get_usr_pentas(user), inline=True)
+    embed.add_field(name=u'\u200b', value=u'\u200b')
 
     return embed
+
+
+def get_last_game(pID):
+    if not pID:
+        return None
+
+    return users.search(User.pID == pID)[0].get('l_game')
+
+
+def get_last_20_game(pID):
+    if not pID:
+        return None
+
+    lastGames = watcher.match.matchlist_by_puuid(region, pID)
+    return lastGames
+
+
+@to_thread
+def lol_reload():
+    for user in users.all():
+        if get_last_20_game(user['pID']):
+            lastGame = get_last_20_game(user['pID'])[0]
+        else:
+            continue
+        if lastGame == get_last_game(user['pID']):
+            continue
+        else:
+            users.update({"l_game": lastGame}, user['ID'] == User.ID)
+            print(f'New game found for {users.search(User.pID == user["pID"])[0].get("name")}')
+            game = get_game(lastGame)
+            player_update(game, user["pID"])
+            player = get_player(game, user["pID"])
+            if not get_win(player):
+                return take_L(user)
+            else:
+                return False
+
+
+def update_20():
+    for user in users.all():
+        pID = user['pID']
+        if get_last_20_game(pID):
+            lastGames = get_last_20_game(pID)
+        else:
+            continue
+        for x in lastGames:
+            game = get_game(x)
+            player_update(game, pID)
+
+
+def get_parts(game):
+    return game['metadata']['participants']
+
+
+def get_info(game):
+    return game['info']['participants']
+
+
+def get_player(game, pID):
+    idx = get_parts(game).index(pID)
+    player = get_info(game)[idx]
+    return player
+
+
+def get_kills(player):
+    return player['kills']
+
+
+def get_win(player):
+    return player['win']
+
+
+def get_deaths(player):
+    return player['deaths']
+
+
+def get_penta(player):
+    return player['pentaKills']
+
+
+def player_update(game, pID):
+    player = get_player(game, pID)
+    kills = get_kills(player)
+    win = get_win(player)
+    deaths = get_deaths(player)
+    pentas = get_penta(player)
+
+    users.update(dbop.add('l_kills', kills), User.pID == pID)
+    users.update(dbop.add('l_deaths', deaths), User.pID == pID)
+    users.update(dbop.add('l_pentas', pentas), User.pID == pID)
+    users.update(dbop.increment('l_games'), User.pID == pID)
+
+    if kills > users.search(User.pID == pID)[0].get('l_max_kill'):
+        users.update({'l_max_kill': kills}, User.pID == pID)
+    if win:
+        users.update(dbop.increment('l_wins'), User.pID == pID)
+        users.update(dbop.increment('l_win_streak'), User.pID == pID)
+        users.update({'l_loss_streak': 0}, User.pID == pID)
+    else:
+        users.update(dbop.increment('l_losses'), User.pID == pID)
+        users.update({'l_win_streak': 0}, User.pID == pID)
+        users.update(dbop.increment('l_win_streak'), User.pID == pID)
+
+
+def get_usr_kills(user):
+    return users.search(User.ID == get_ID(user))[0].get('l_kills')
+
+
+def get_usr_deaths(user):
+    return users.search(User.ID == get_ID(user))[0].get('l_deaths')
+
+
+def get_usr_wins(user):
+    return users.search(User.ID == get_ID(user))[0].get('l_wins')
+
+
+def get_usr_losses(user):
+    return users.search(User.ID == get_ID(user))[0].get('l_losses')
+
+
+def get_usr_winstreak(user):
+    return users.search(User.ID == get_ID(user))[0].get('l_win_streak')
+
+
+def get_usr_lossstreak(user):
+    return users.search(User.ID == get_ID(user))[0].get('l_loss_streak')
+
+
+def get_usr_pentas(user):
+    return users.search(User.ID == get_ID(user))[0].get('l_pentas')
+
+
+def get_usr_games(user):
+    return users.search(User.ID == get_ID(user))[0].get('l_games')
+
+
+def get_usr_max_kill(user):
+    return users.search(User.ID == get_ID(user))[0].get('l_max_kill')
+
+def get_game(game):
+    return watcher.match.by_id(region, game)
