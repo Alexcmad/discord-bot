@@ -266,11 +266,11 @@ def lol_stats(user):
     embed.add_field(name="Kills", value=get_usr_kills(user), inline=True)
     embed.add_field(name="Deaths", value=get_usr_deaths(user), inline=True)
     embed.add_field(name="Assists", value=get_usr_assists(user), inline=True)
-    embed.add_field(name=u'\u200b', value=u'\u200b')
+    #embed.add_field(name=u'\u200b', value=u'\u200b')
     embed.add_field(name="Most Kills", value=get_usr_max_kill(user), inline=True)
     embed.add_field(name="Pentas", value=get_usr_pentas(user), inline=True)
     embed.add_field(name="Quadras", value=get_usr_quadras(user), inline=True)
-    embed.add_field(name=u'\u200b', value=u'\u200b')
+    #embed.add_field(name=u'\u200b', value=u'\u200b')
 
     return embed
 
