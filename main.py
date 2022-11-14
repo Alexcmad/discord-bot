@@ -102,7 +102,7 @@ async def on_message(message):
         @client.event
         async def on_reaction_add(react, usr):
             print(react)
-            await board.remove_reactions(react,usr)
+            await board.remove_reaction(react,usr)
             await board.edit(embed=bot.leaderboard(choice(sorts)))
 
 
