@@ -438,17 +438,20 @@ def leaderboard(sort):
             ,"l_games": "***🎮Most Games Played🎮***"
             }
     board = discord.Embed(title=desc.get(sort), colour=choice(colors))
-    for pleb in range(9):
-        pre = pleb + 1
-        if pre in range(1, 4):
-            if pre == 1:
-                pre = "👑🥇👑"
-            elif pre == 2:
-                pre = "🥈"
-            elif pre == 3:
-                pre = '🥉'
+    try:
+        for pleb in range(9):
+            pre = pleb + 1
+            if pre in range(1, 4):
+                if pre == 1:
+                    pre = "👑🥇👑"
+                elif pre == 2:
+                    pre = "🥈"
+                elif pre == 3:
+                    pre = '🥉'
 
-            board.add_field(name=f"{pre}{list[pleb].get('name')}{pre}", value=list[pleb].get(sort), inline=False)
-        else:
-            board.add_field(name=f"{list[pleb].get('name')}", value=list[pleb].get(sort), inline=True)
+                board.add_field(name=f"{pre}{list[pleb].get('name')}{pre}", value=list[pleb].get(sort), inline=False)
+            else:
+                board.add_field(name=f"{list[pleb].get('name')}", value=list[pleb].get(sort), inline=True)
+    except:
+        return board
     return board

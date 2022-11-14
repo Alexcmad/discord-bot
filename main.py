@@ -96,7 +96,16 @@ async def on_message(message):
                 await channel.send(bot.lol_stats(user))
 
     elif msg.startswith(f'{prefix}lol top'):
-        await channel.send(embed = bot.leaderboard(choice(sorts)))
+        board = await channel.send(embed = bot.leaderboard('l_wins'))
+        await board.add_reaction('⏩')
+
+        @client.event
+        async def on_reaction_add(react, usr):
+            print(react)
+            await board.remove_reactions(react,usr)
+            await board.edit(embed=bot.leaderboard(choice(sorts)))
+
+
     if is_cChat:
         bot.counted(user)
 
