@@ -435,6 +435,7 @@ def leaderboard(sort):
             "l_win_streak": "***🔥Leaderboard of Win Streaks🔥***",
             "l_loss_streak": "***😐Leaderboard of Loss Streaks😐***"
             ,"l_max_kill": "***🔥🗡️🔥Most Kills in One Game!🔥🗡️🔥***"
+            ,"l_games": "***🎮Most Games Played🎮***"
             }
     board = discord.Embed(title=desc.get(sort), colour=choice(colors))
     for pleb in range(9):
