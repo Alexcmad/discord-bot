@@ -265,9 +265,11 @@ def lol_stats(user):
     embed.add_field(name=u'\u200b', value=u'\u200b')
     embed.add_field(name="Kills", value=get_usr_kills(user), inline=True)
     embed.add_field(name="Deaths", value=get_usr_deaths(user), inline=True)
+    embed.add_field(name="Assists", value=get_usr_assists(user), inline=True)
     embed.add_field(name=u'\u200b', value=u'\u200b')
     embed.add_field(name="Most Kills", value=get_usr_max_kill(user), inline=True)
     embed.add_field(name="Pentas", value=get_usr_pentas(user), inline=True)
+    embed.add_field(name="Quadras", value=get_usr_quadras(user), inline=True)
     embed.add_field(name=u'\u200b', value=u'\u200b')
 
     return embed
@@ -429,6 +431,11 @@ def get_usr_pentas(user):
 def get_usr_games(user):
     return users.search(User.ID == get_ID(user))[0].get('l_games')
 
+def get_usr_assists(user):
+    return users.search(User.ID == get_ID(user))[0].get('l_assists')
+
+def get_usr_quadras(user):
+    return users.search(User.ID == get_ID(user))[0].get('l_quadras')
 
 def get_usr_max_kill(user):
     return users.search(User.ID == get_ID(user))[0].get('l_max_kill')
