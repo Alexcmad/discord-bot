@@ -1,6 +1,6 @@
 import datetime
 import time
-
+from random import choice
 import discord
 import bot
 
@@ -13,7 +13,15 @@ alex = 298206761587048448
 prefix = '.'
 hearth_p = 832504799533596673
 
-
+sorts = ["l_max_kill",
+            "l_kills",
+            "l_deaths",
+            "l_wins",
+            "l_games",
+            "l_losses",
+            "l_win_streak",
+            "l_loss_streak",
+            "l_pentas"]
 
 @client.event
 async def on_ready():
@@ -86,6 +94,8 @@ async def on_message(message):
             except:
                 await channel.send(bot.lol_stats(user))
 
+    elif msg.startswith(f'{prefix}lol top'):
+        await channel.send(embed = bot.leaderboard(choice(sorts)))
     if is_cChat:
         bot.counted(user)
 
@@ -124,7 +134,7 @@ async def on_message(message):
             bot.update_20()
 
 
-@discord.ext.tasks.loop(seconds=45, reconnect=True)
+@discord.ext.tasks.loop(minutes=1, reconnect=True)
 async def lol_reload():
     pushup_channel = client.get_channel(hearth_p)
     #print(pushup_channel)

@@ -51,7 +51,7 @@ def add_user(user):
     return {'ID': get_ID(user),
             'name': get_name(user),
             'count': 0,
-            'due':0,
+            'due': 0,
             'L': 0,
             'counted': 0,
             'quote': [],
@@ -308,15 +308,26 @@ def lol_reload():
 
 
 def update_20():
+    users.update({"l_max_kill": 0,
+                  "l_kills": 0,
+                  "l_deaths": 0,
+                  "l_wins": 0,
+                  "l_games": 0,
+                  "l_losses": 0,
+                  "l_win_streak": 0,
+                  "l_loss_streak": 0,
+                  "l_pentas": 0})
     for user in users.all():
+
         pID = user['pID']
         if get_last_20_game(pID):
             lastGames = get_last_20_game(pID)
         else:
             continue
-        for x in lastGames:
+        for x in reversed(lastGames):
             game = get_game(x)
             player_update(game, pID)
+    print("done")
 
 
 def get_parts(game):
@@ -408,5 +419,35 @@ def get_usr_games(user):
 def get_usr_max_kill(user):
     return users.search(User.ID == get_ID(user))[0].get('l_max_kill')
 
+
 def get_game(game):
     return watcher.match.by_id(region, game)
+
+
+def leaderboard(sort):
+    playsLol = users.search((User.pID != None))
+    list = sorted(playsLol, key=lambda d: d[sort], reverse=True)
+    desc = {"l_wins": "***👑🥇Leaderboard of Wins🥇👑***",
+            "l_kills": "***🗡️Leaderboard of Kills🗡️***",
+            "l_deaths": "***☠️Leaderboard of Deaths☠️***",
+            "l_pentas": "***🗡🗡🗡🗡🗡Leaderboard of Pentas🗡🗡🗡🗡🗡️***",
+            "l_losses": "***😐Leaderboard of Losses😐***",
+            "l_win_streak": "***🔥Leaderboard of Win Streaks🔥***",
+            "l_loss_streak": "***😐Leaderboard of Loss Streaks😐***"
+            ,"l_max_kill": "***🔥🗡️🔥Most Kills in One Game!🔥🗡️🔥***"
+            }
+    board = discord.Embed(title=desc.get(sort), colour=choice(colors))
+    for pleb in range(9):
+        pre = pleb + 1
+        if pre in range(1, 4):
+            if pre == 1:
+                pre = "👑🥇👑"
+            elif pre == 2:
+                pre = "🥈"
+            elif pre == 3:
+                pre = '🥉'
+
+            board.add_field(name=f"{pre}{list[pleb].get('name')}{pre}", value=list[pleb].get(sort), inline=False)
+        else:
+            board.add_field(name=f"{list[pleb].get('name')}", value=list[pleb].get(sort), inline=True)
+    return board
