@@ -4,7 +4,6 @@ from random import choice
 import discord
 import bot
 
-
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 
@@ -13,15 +12,19 @@ alex = 298206761587048448
 prefix = '.'
 hearth_p = 832504799533596673
 
-sorts = ["l_max_kill",
-            "l_kills",
-            "l_deaths",
-            "l_wins",
-            "l_games",
-            "l_losses",
-            "l_win_streak",
-            "l_loss_streak",
-            "l_pentas"]
+sorts = ["l_wins",
+         "l_max_kill",
+         "l_kills",
+         "l_assists",
+         "l_deaths",
+         "l_games",
+         "l_losses",
+         "l_win_streak",
+         "l_loss_streak",
+         "l_pentas",
+         "l_quadras",]
+idx = 0
+
 
 @client.event
 async def on_ready():
@@ -80,7 +83,7 @@ async def on_message(message):
         await channel.send(bot.pushup(user))
 
     elif msg.startswith(f'{prefix}link lol'):
-        #print('loladd')
+        # print('loladd')
         await channel.send(bot.add_summoner(user, message.content[9:]))
 
     elif msg.startswith(f'{prefix}lol stats'):
@@ -96,15 +99,18 @@ async def on_message(message):
                 await channel.send(bot.lol_stats(user))
 
     elif msg.startswith(f'{prefix}lol top'):
-        board = await channel.send(embed = bot.leaderboard('l_wins'))
+        board = await channel.send(embed=bot.leaderboard('l_wins'))
         await board.add_reaction('⏩')
 
         @client.event
         async def on_reaction_add(react, usr):
-            print(react)
-            await board.remove_reaction(react,usr)
-            await board.edit(embed=bot.leaderboard(choice(sorts)))
-
+            global idx
+            # print(react)
+            idx += 1
+            if idx > len(sorts)-1:
+                idx = 0
+            await board.remove_reaction(react, usr)
+            await board.edit(embed=bot.leaderboard(sorts[idx]))
 
     if is_cChat:
         bot.counted(user)
@@ -147,7 +153,7 @@ async def on_message(message):
 @discord.ext.tasks.loop(minutes=1, reconnect=True)
 async def lol_reload():
     pushup_channel = client.get_channel(hearth_p)
-    #print(pushup_channel)
+    # print(pushup_channel)
     now = datetime.datetime.now()
     current_time = now.strftime("%H:%M:%S")
     print(f"<{current_time}> Searching for Games...")
@@ -156,9 +162,11 @@ async def lol_reload():
         for x in reload:
             await pushup_channel.send(x)
 
+
 @discord.ext.tasks.loop(minutes=60, reconnect=True)
 async def lol_board():
     channel = client.get_channel(1041724699631173642)
     await channel.send(embed=bot.leaderboard(choice(sorts)))
-client.run(bot.TOKEN)
 
+
+client.run(bot.TOKEN)

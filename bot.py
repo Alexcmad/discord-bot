@@ -64,7 +64,9 @@ def add_user(user):
             "l_losses": 0,
             "l_win_streak": 0,
             "l_loss_streak": 0,
-            "l_pentas": 0
+            "l_pentas": 0,
+            "l_assists": 0,
+            "l_quadras": 0
             }
 
 
@@ -316,7 +318,10 @@ def update_20():
                   "l_losses": 0,
                   "l_win_streak": 0,
                   "l_loss_streak": 0,
-                  "l_pentas": 0})
+                  "l_pentas": 0,
+                  "l_assists":0,
+                  "l_quadras":0
+                  })
     for user in users.all():
 
         pID = user['pID']
@@ -359,6 +364,11 @@ def get_deaths(player):
 def get_penta(player):
     return player['pentaKills']
 
+def get_assist(player):
+    return player['assists']
+
+def get_quadras(player):
+    return player['quadraKills']
 
 def player_update(game, pID):
     player = get_player(game, pID)
@@ -366,10 +376,14 @@ def player_update(game, pID):
     win = get_win(player)
     deaths = get_deaths(player)
     pentas = get_penta(player)
+    assists = get_assist(player)
+    quadra = get_quadras(player)
 
     users.update(dbop.add('l_kills', kills), User.pID == pID)
     users.update(dbop.add('l_deaths', deaths), User.pID == pID)
     users.update(dbop.add('l_pentas', pentas), User.pID == pID)
+    users.update(dbop.add('l_quadras', quadra), User.pID == pID)
+    users.update(dbop.add('l_assists', assists), User.pID == pID)
     users.update(dbop.increment('l_games'), User.pID == pID)
 
     if kills > users.search(User.pID == pID)[0].get('l_max_kill'):
@@ -436,6 +450,8 @@ def leaderboard(sort):
             "l_loss_streak": "***😐Leaderboard of Loss Streaks😐***"
             ,"l_max_kill": "***🔥🗡️🔥Most Kills in One Game!🔥🗡️🔥***"
             ,"l_games": "***🎮Most Games Played🎮***"
+        , "l_assists": "***💖Leaderboard of Assists💖***"
+        , "l_quadras": "***💖🗡🗡🗡🗡Leaderboard of Quadras🗡🗡🗡🗡💖***"
             }
     board = discord.Embed(title=desc.get(sort), colour=choice(colors))
     try:
