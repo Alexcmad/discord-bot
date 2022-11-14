@@ -147,9 +147,9 @@ async def lol_reload():
         for x in reload:
             await pushup_channel.send(x)
 
-@discord.ext.tasks.loop(minutes=45, reconnect=True)
+@discord.ext.tasks.loop(minutes=60, reconnect=True)
 async def lol_board():
-    channel = client.get_channel(742448286702633092)
+    channel = client.get_channel(1041724699631173642)
     await channel.send(embed=bot.leaderboard(choice(sorts)))
 client.run(bot.TOKEN)
 
