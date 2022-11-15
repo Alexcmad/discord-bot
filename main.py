@@ -13,7 +13,7 @@ bird = 229401751281729536
 alex = 298206761587048448
 prefix = '.'
 hearth_p = 832504799533596673
-
+pg = False
 sorts = ["l_wins",
          "l_losses",
          "l_kills",
@@ -35,7 +35,7 @@ help.add_field(name="Take L",value='L',inline=False)
 help.add_field(name="Do Pushups",value='Pushup',inline=False)
 help.add_field(name="View Hearth Stats",value='Stats',inline=False)
 help.add_field(name="View Stats",value='Profile',inline=False)
-help.set_footer(text="_Page 1_")
+help.set_footer(text="Page 1")
 
 help2 = discord.Embed(title="***🤖Bot Commands🤖***",description=f"Prefix = '{prefix}'\nCommands are **NOT** case sensitive")
 help2.add_field(name="Link League Account",value='Link Lol [summoner name]',inline=False)
@@ -43,13 +43,15 @@ help2.add_field(name="View League Stats",value='Lol Stats',inline=False)
 help2.add_field(name="View League Leaderboard",value='Lol Top',inline=False)
 help2.add_field(name="Say hello",value='Hello',inline=False)
 help2.add_field(name="Get Bot Commands",value='Help',inline=False)
-help2.set_footer(text="_Page 2_")
+help2.set_footer(text="Page 2")
+
+
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     guilds = client.guilds
     lol_reload.start()
-
+    lol_board.start()
 
     for x in guilds:
         bot.is_server(x)
@@ -57,6 +59,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+
     user = message.author
     if user == client.user:
         return
@@ -102,20 +105,24 @@ async def on_message(message):
 
     elif msg.startswith(f'{prefix}help'):
         hlp = await channel.send(embed = help)
-        await hlp.add_reaction('▶️')
+        fwd = '▶'
+        bck ='◀'
+        await hlp.add_reaction(fwd)
         @client.event
         async def on_reaction_add(react, usr):
+            global pg
             global idx
-            # print(react)
-            idx += 1
-            if react == '▶️' and not react.me:
-                await hlp.clear_reactions()
-                await hlp.add_reaction('◀️')
+            print(react)
+            if not pg and usr.id != hearth:
                 await hlp.edit(embed=help2)
-            elif react == '◀️' and not react.me:
                 await hlp.clear_reactions()
-                await hlp.add_reaction('▶️')
+                await hlp.add_reaction(bck)
+                pg = True
+            elif pg and usr.id != hearth:
                 await hlp.edit(embed=help)
+                await hlp.clear_reactions()
+                await hlp.add_reaction(fwd)
+                pg = False
 
     elif msg.startswith(f'{prefix}link lol'):
         await channel.send(bot.add_summoner(user, message.content[9:]))
@@ -156,17 +163,18 @@ async def on_message(message):
     if user.id == bird:
         if not is_cChat:
             if not is_qChat:
-                sym = random.randint(0,9)
-                if sym == 9:
-                    await message.add_reaction('🇸')
-                    await message.add_reaction('🇾')
-                    await message.add_reaction('🇲')
-                    await message.add_reaction('🇧')
-                    await message.add_reaction('🇮')
-                    await message.add_reaction('🇷')
-                    await message.add_reaction('🇩')
-                else:
-                    await message.add_reaction(choice(birds))
+                if random.randint(0,9) == 9:
+                    sym = random.randint(0,9)
+                    if sym == 9:
+                        await message.add_reaction('🇸')
+                        await message.add_reaction('🇾')
+                        await message.add_reaction('🇲')
+                        await message.add_reaction('🇧')
+                        await message.add_reaction('🇮')
+                        await message.add_reaction('🇷')
+                        await message.add_reaction('🇩')
+                    else:
+                        await message.add_reaction(choice(birds))
 
 
     elif user.id == alex:
@@ -205,11 +213,12 @@ async def lol_reload():
         for x in reload:
             await pushup_channel.send(x)
 
-"""
-@discord.ext.tasks.loop(minutes=60, reconnect=True)
+
+@discord.ext.tasks.loop(seconds=15, reconnect=True)
 async def lol_board():
-    channel = client.get_channel(1041724699631173642)
-    await channel.send(embed=bot.leaderboard(choice(sorts)))
-"""
+    channel = client.get_channel(1042005782025207848)
+    msg = [x async for x in channel.history(limit=1)][0]
+    await msg.edit(embed=bot.leaderboard(choice(sorts)))
+
 
 client.run(bot.TOKEN)
