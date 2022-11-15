@@ -13,17 +13,18 @@ prefix = '.'
 hearth_p = 832504799533596673
 
 sorts = ["l_wins",
-         "l_max_kill",
-         "l_kills",
-         "l_assists",
-         "l_deaths",
-         "l_games",
          "l_losses",
+         "l_kills",
+         "l_deaths",
+        "l_max_kill",
+         "l_assists",
+        "l_pentas",
+         "l_quadras",
+         "l_games",
          "l_win_streak",
-         "l_loss_streak",
-         "l_pentas",
-         "l_quadras",]
-idx = 0
+         "l_loss_streak"
+         ]
+idx = 1
 
 
 @client.event
