@@ -461,6 +461,7 @@ def leaderboard(sort):
         , "l_quadras": "***💖🗡🗡🗡🗡Leaderboard of Quadras🗡🗡🗡🗡💖***"
             }
     board = discord.Embed(title=desc.get(sort), colour=choice(colors))
+    board.set_footer(text="Click the reaction to cycle through Leaderboard Types")
     try:
         for pleb in range(9):
             pre = pleb + 1
