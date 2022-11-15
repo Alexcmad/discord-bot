@@ -51,7 +51,7 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     guilds = client.guilds
     lol_reload.start()
-    lol_board.start()
+    #lol_board.start()
 
     for x in guilds:
         bot.is_server(x)
@@ -200,7 +200,7 @@ async def on_message(message):
         elif msg.startswith(f'{prefix}update 20'):
             bot.update_20()
 
-
+""""""
 @discord.ext.tasks.loop(minutes=1, reconnect=True)
 async def lol_reload():
     pushup_channel = client.get_channel(hearth_p)
@@ -213,12 +213,12 @@ async def lol_reload():
         for x in reload:
             await pushup_channel.send(x)
 
-
+"""
 @discord.ext.tasks.loop(seconds=15, reconnect=True)
 async def lol_board():
     channel = client.get_channel(1042005782025207848)
     msg = [x async for x in channel.history(limit=1)][0]
     await msg.edit(embed=bot.leaderboard(choice(sorts)))
-
+"""
 
 client.run(bot.TOKEN)
