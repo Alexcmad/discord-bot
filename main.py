@@ -18,31 +18,35 @@ sorts = ["l_wins",
          "l_losses",
          "l_kills",
          "l_deaths",
-        "l_max_kill",
+         "l_max_kill",
          "l_assists",
-        "l_pentas",
+         "l_pentas",
          "l_quadras",
          "l_games",
          "l_win_streak",
          "l_loss_streak"
          ]
 
-birds = ["🦃","🐔","🐓","🐣","🐤","🐥","🐦","🦆","🐧"]
+birds = ["🦃", "🐔", "🐓", "🐣", "🐤", "🐥", "🐦", "🦆", "🐧"]
 idx = 1
 
-help = discord.Embed(title="***🤖Bot Commands🤖***",description=f"Prefix = '{prefix}'\nCommands are **NOT** case sensitive")
-help.add_field(name="Take L",value='L',inline=False)
-help.add_field(name="Do Pushups",value='Pushup',inline=False)
-help.add_field(name="View Hearth Stats",value='Stats',inline=False)
-help.add_field(name="View Stats",value='Profile',inline=False)
+help = discord.Embed(title="***🤖Bot Commands🤖***",
+                     description=f"Prefix = '{prefix}'\nCommands are **NOT** case sensitive")
+help.add_field(name="Take L", value='L', inline=False)
+help.add_field(name="Do Pushups", value='Pushup', inline=False)
+help.add_field(name="View Hearth Stats", value='Stats', inline=False)
+help.add_field(name="View Stats", value='Profile', inline=False)
 # help.set_footer(text="Page 1")
 
-help2 = discord.Embed(title="***🤖Bot Commands🤖***",description=f"Prefix = '{prefix}'\nCommands are **NOT** case sensitive")
-help.add_field(name="Link League Account",value='Link Lol [summoner name]',inline=False)
-help.add_field(name="View League Stats",value='Lol Stats',inline=False)
-help.add_field(name="View League Leaderboard",value='Lol Top [Temporarily Disabled]',inline=False)
-help.add_field(name="Say hello",value='Hello',inline=False)
-help.add_field(name="Get Bot Commands",value='Help',inline=False)
+help2 = discord.Embed(title="***🤖Bot Commands🤖***",
+                      description=f"Prefix = '{prefix}'\nCommands are **NOT** case sensitive")
+help.add_field(name="Link League Account", value='Link Lol [summoner name]', inline=False)
+help.add_field(name="View League Stats", value='Lol Stats', inline=False)
+help.add_field(name="View League Leaderboard", value='Lol Top [Temporarily Disabled]', inline=False)
+help.add_field(name="Say hello", value='Hello', inline=False)
+help.add_field(name="Get Bot Commands", value='Help', inline=False)
+
+
 # help2.set_footer(text="Page 2")
 
 
@@ -51,7 +55,7 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     guilds = client.guilds
     lol_reload.start()
-    #lol_board.start()
+    # lol_board.start()
 
     for x in guilds:
         bot.is_server(x)
@@ -59,7 +63,6 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-
     user = message.author
     if user == client.user:
         return
@@ -104,7 +107,7 @@ async def on_message(message):
         await channel.send(bot.pushup(user))
 
     elif msg.startswith(f'{prefix}help'):
-        hlp = await channel.send(embed = help)
+        hlp = await channel.send(embed=help)
         """
         fwd = '▶'
         bck ='◀'
@@ -141,6 +144,9 @@ async def on_message(message):
             except:
                 await channel.send(bot.lol_stats(user))
 
+    elif msg.startswith(f'{prefix}quote'):
+        await channel.send(bot.random_quote())
+
     """
     elif msg.startswith(f'{prefix}lol top'):
         board = await channel.send(embed=bot.leaderboard('l_wins'))
@@ -168,8 +174,8 @@ async def on_message(message):
     if user.id == bird:
         if not is_cChat:
             if not is_qChat:
-                if random.randint(0,9) == 9:
-                    sym = random.randint(0,9)
+                if random.randint(0, 9) == 9:
+                    sym = random.randint(0, 9)
                     if sym == 9:
                         await message.add_reaction('🇸')
                         await message.add_reaction('🇾')
@@ -205,7 +211,10 @@ async def on_message(message):
         elif msg.startswith(f'{prefix}update 20'):
             bot.update_20()
 
+
 """"""
+
+
 @discord.ext.tasks.loop(minutes=1, reconnect=True)
 async def lol_reload():
     pushup_channel = client.get_channel(hearth_p)
@@ -217,6 +226,7 @@ async def lol_reload():
     if reload:
         for x in reload:
             await pushup_channel.send(x)
+
 
 """
 @discord.ext.tasks.loop(seconds=15, reconnect=True)

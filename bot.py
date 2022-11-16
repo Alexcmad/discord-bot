@@ -479,3 +479,8 @@ def leaderboard(sort):
     except:
         return board
     return board
+
+def random_quote():
+    q = choice(choice(users.search(User.quote!=[])).get("quote"))
+
+    return q
