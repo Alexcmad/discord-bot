@@ -35,15 +35,15 @@ help.add_field(name="Take L",value='L',inline=False)
 help.add_field(name="Do Pushups",value='Pushup',inline=False)
 help.add_field(name="View Hearth Stats",value='Stats',inline=False)
 help.add_field(name="View Stats",value='Profile',inline=False)
-help.set_footer(text="Page 1")
+# help.set_footer(text="Page 1")
 
 help2 = discord.Embed(title="***🤖Bot Commands🤖***",description=f"Prefix = '{prefix}'\nCommands are **NOT** case sensitive")
-help2.add_field(name="Link League Account",value='Link Lol [summoner name]',inline=False)
-help2.add_field(name="View League Stats",value='Lol Stats',inline=False)
-help2.add_field(name="View League Leaderboard",value='Lol Top',inline=False)
-help2.add_field(name="Say hello",value='Hello',inline=False)
-help2.add_field(name="Get Bot Commands",value='Help',inline=False)
-help2.set_footer(text="Page 2")
+help.add_field(name="Link League Account",value='Link Lol [summoner name]',inline=False)
+help.add_field(name="View League Stats",value='Lol Stats',inline=False)
+help.add_field(name="View League Leaderboard",value='Lol Top [Temporarily Disabled]',inline=False)
+help.add_field(name="Say hello",value='Hello',inline=False)
+help.add_field(name="Get Bot Commands",value='Help',inline=False)
+# help2.set_footer(text="Page 2")
 
 
 @client.event
@@ -105,6 +105,7 @@ async def on_message(message):
 
     elif msg.startswith(f'{prefix}help'):
         hlp = await channel.send(embed = help)
+        """
         fwd = '▶'
         bck ='◀'
         await hlp.add_reaction(fwd)
@@ -123,6 +124,7 @@ async def on_message(message):
                 await hlp.clear_reactions()
                 await hlp.add_reaction(fwd)
                 pg = False
+        """
 
     elif msg.startswith(f'{prefix}link lol'):
         await channel.send(bot.add_summoner(user, message.content[9:]))
@@ -139,9 +141,11 @@ async def on_message(message):
             except:
                 await channel.send(bot.lol_stats(user))
 
+    """
     elif msg.startswith(f'{prefix}lol top'):
         board = await channel.send(embed=bot.leaderboard('l_wins'))
         await board.add_reaction('⏩')
+
 
         @client.event
         async def on_reaction_add(react, usr):
@@ -152,6 +156,7 @@ async def on_message(message):
                 idx = 0
             await board.remove_reaction(react, usr)
             await board.edit(embed=bot.leaderboard(sorts[idx]))
+    """
 
     if is_cChat:
         bot.counted(user)
