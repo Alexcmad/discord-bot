@@ -22,7 +22,7 @@ def to_thread(func: typing.Callable) -> typing.Coroutine:
 
 
 TOKEN = 'MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
-RIOT = 'RGAPI-ffac486d-882d-462a-8e93-42f449a774e4'
+RIOT = 'RGAPI-013de747-9c17-4b2a-820d-d4d3c2c6e22b'
 region = 'NA1'
 watcher = LolWatcher(api_key=RIOT)
 
