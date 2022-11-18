@@ -22,7 +22,7 @@ def to_thread(func: typing.Callable) -> typing.Coroutine:
 
 
 TOKEN = 'MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
-RIOT = 'RGAPI-013de747-9c17-4b2a-820d-d4d3c2c6e22b'
+RIOT = 'RGAPI-1a8abfe1-6c87-4da5-a0d8-79176c9c8055'
 region = 'NA1'
 watcher = LolWatcher(api_key=RIOT)
 
@@ -123,8 +123,13 @@ def due(user):
     return l
 
 
-def pushup(user):
-    amount = pushupCount
+def pushup(user, amount):
+    if amount < 0:
+        return "Bro tried to do Negative pushups yall laugh at this nigga"
+    elif amount == 0:
+        return "😐"
+    elif amount > 25:
+        return f"Sureeeee you did buddy I believe you **{amount} pUsHuPs AdDeD** See?"
     users.update_multiple([
         (dbop.add('count', amount), User.ID == get_ID(user)),
         (dbop.subtract('due', amount), User.ID == get_ID(user))
@@ -461,7 +466,7 @@ def leaderboard(sort):
         , "l_quadras": "***💖🗡🗡🗡🗡Leaderboard of Quadras🗡🗡🗡🗡💖***"
             }
     board = discord.Embed(title=desc.get(sort), colour=choice(colors))
-    board.set_footer(text="Click the reaction to cycle through Leaderboard Types")
+    board.set_footer(text="Use the menu to change Leaderboard Types")
     try:
         for pleb in range(9):
             pre = pleb + 1
