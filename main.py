@@ -202,7 +202,7 @@ class bView(discord.ui.View):
     async def on_timeout(self):
         for child in self.children:
             child.disabled = True
-        #await self.message.edit("Timed Out",view=self)
+        await self.message.delete()
     @discord.ui.select(placeholder="Choose a Leaderboard",min_values=1, max_values=1,options= boards)
     async def select_callback(self,select,interaction):
         await interaction.response.edit_message(embed = bot.leaderboard(select.values[0]))

@@ -22,7 +22,7 @@ def to_thread(func: typing.Callable) -> typing.Coroutine:
 
 
 TOKEN = 'MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
-RIOT = 'RGAPI-1a8abfe1-6c87-4da5-a0d8-79176c9c8055'
+RIOT = 'RGAPI-cb79de05-35ac-4d56-83db-d358a59e6dec'
 region = 'NA1'
 watcher = LolWatcher(api_key=RIOT)
 
@@ -251,7 +251,8 @@ def get_summoner(pID):
 def get_level(pID):
     return watcher.summoner.by_puuid(region=region, encrypted_puuid=pID)['summonerLevel']
 
-
+def get_usr_kda(user):
+    return round(get_usr_kills(user) / get_usr_deaths(user),2)
 def lol_stats(user):
     is_user(user)
     userid = get_ID(user)
@@ -260,14 +261,19 @@ def lol_stats(user):
         return f'Not Linked to Riot. \nDo:   .link lol [Summoner Name]'
 
     embed = discord.Embed(title=f"{get_name(user)}'s League Profile", colour=choice(colors))
-    embed.add_field(name="Summoner Name", value=get_summoner(pID), inline=False)
-    embed.add_field(name="Total Games🎮", value=get_usr_games(user), inline=False)
+    embed.add_field(name="Summoner Name", value=get_summoner(pID), inline=True)
+    embed.add_field(name="Level", value=get_level(pID), inline=True)
+    embed.add_field(name="Total Games🎮", value=get_usr_games(user), inline=True)
+
+    #embed.add_field(name=u'\u200b', value=u'\u200b')
     embed.add_field(name="Wins🥇", value=get_usr_wins(user), inline=True)
     embed.add_field(name="Losses🥲", value=get_usr_losses(user), inline=True)
-    embed.add_field(name=u'\u200b', value=u'\u200b')
+    embed.add_field(name="W/R Ratio", value=round(get_usr_wins(user)/get_usr_losses(user),2), inline=True)
+    #embed.add_field(name=u'\u200b', value=u'\u200b')
+    embed.add_field(name="K/D Ratio", value=get_usr_kda(user), inline=True)
     embed.add_field(name="Win Streak👑", value=get_usr_winstreak(user), inline=True)
     embed.add_field(name="Loss Streak🐵", value=get_usr_lossstreak(user), inline=True)
-    embed.add_field(name=u'\u200b', value=u'\u200b')
+    #embed.add_field(name=u'\u200b', value=u'\u200b')
     embed.add_field(name="Kills🗡", value=get_usr_kills(user), inline=True)
     embed.add_field(name="Deaths⚰️", value=get_usr_deaths(user), inline=True)
     embed.add_field(name="Assists💖", value=get_usr_assists(user), inline=True)
@@ -486,6 +492,8 @@ def leaderboard(sort):
     return board
 
 def random_quote():
-    q = choice(choice(users.search(User.quote!=[])).get("quote"))
-
-    return q
+    q = choice(choice(users.search(len(User.quote)>1)).get("quote"))
+    if (q.split())>1:
+        return q
+    else:
+        random_quote()
