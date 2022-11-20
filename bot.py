@@ -22,7 +22,7 @@ def to_thread(func: typing.Callable) -> typing.Coroutine:
 
 
 TOKEN = 'MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
-RIOT = 'RGAPI-cb79de05-35ac-4d56-83db-d358a59e6dec'
+RIOT = 'RGAPI-51de3d04-597e-46d0-9e1d-1d2fbdfeb953'
 region = 'NA1'
 watcher = LolWatcher(api_key=RIOT)
 
@@ -492,8 +492,55 @@ def leaderboard(sort):
     return board
 
 def random_quote():
-    q = choice(choice(users.search(len(User.quote)>1)).get("quote"))
-    if (q.split())>1:
-        return q
+    quotes = choice(users.search(User.quote!=[])).get("quote")
+    if len(quotes) < 1:
+        random_quote()
+    q = choice(quotes)
+    if len(q.split())>1:
+        if guess_quote(q)[0]:
+            return guess_quote(q)
     else:
         random_quote()
+
+def guess_quote(q):
+    splitted = q.split()
+    print (splitted)
+    answer = ''
+    for qt in splitted:
+        if qt.startswith('<@'):
+            answer = qt
+            splitted.remove(qt)
+        #elif qt.startswith('~') or qt.startswith('-'):
+        #    splitted.remove(qt)
+        qt+=' '
+    question = ' '.join(splitted)[1:]
+    return (question, answer)
+
+
+
+def player_update(game, pID):
+    player = get_player(game, pID)
+    kills = get_kills(player)
+    win = get_win(player)
+    deaths = get_deaths(player)
+    pentas = get_penta(player)
+    assists = get_assist(player)
+    quadra = get_quadras(player)
+
+    users.update(dbop.add('l_kills', kills), User.pID == pID)
+    users.update(dbop.add('l_deaths', deaths), User.pID == pID)
+    users.update(dbop.add('l_pentas', pentas), User.pID == pID)
+    users.update(dbop.add('l_quadras', quadra), User.pID == pID)
+    users.update(dbop.add('l_assists', assists), User.pID == pID)
+    users.update(dbop.increment('l_games'), User.pID == pID)
+
+    if kills > users.search(User.pID == pID)[0].get('l_max_kill'):
+        users.update({'l_max_kill': kills}, User.pID == pID)
+    if win:
+        users.update(dbop.increment('l_wins'), User.pID == pID)
+        users.update(dbop.increment('l_win_streak'), User.pID == pID)
+        users.update({'l_loss_streak': 0}, User.pID == pID)
+    elif not win:
+        users.update(dbop.increment('l_losses'), User.pID == pID)
+        users.update({'l_win_streak': 0}, User.pID == pID)
+        users.update(dbop.increment('l_loss_streak'), User.pID == pID)

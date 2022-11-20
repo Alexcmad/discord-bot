@@ -9,6 +9,8 @@ import bot
 intents = discord.Intents.all()
 client = commands.Bot(intents=intents)
 
+game_answer = ''
+current_quiz = ''
 hearth = 695056946616860729
 bird = 229401751281729536
 alex = 298206761587048448
@@ -60,6 +62,10 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    print(f"What needs to = quiz: {message.reference.message_id}")
+    print(f"Quiz: {current_quiz.id}")
+    if message.content == game_answer and message.reference.message_id == current_quiz.id:
+        print("Correct Anser")
     user = message.author
     if user == client.user:
         return
@@ -214,7 +220,14 @@ async def lol_top(ctx):
 @client.slash_command(name="random-quote", guild_ids=[hearth],
                       description="Read a Random Quote")
 async def random_quote(ctx):
-    await ctx.respond(bot.random_quote())
+    global current_quiz, game_answer
+    question = (bot.random_quote())
+    game_answer= question[1]
+    current_quiz = await ctx.respond(question[0])
+
+
+
+
 
 
 
