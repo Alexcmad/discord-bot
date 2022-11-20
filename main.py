@@ -62,10 +62,12 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    print(f"What needs to = quiz: {message.reference.message_id}")
-    print(f"Quiz: {current_quiz.id}")
-    if message.content == game_answer and message.reference.message_id == current_quiz.id:
-        print("Correct Anser")
+    if message.reference:
+        print(f"What needs to = quiz: {message.reference.message_id}")
+        print(f"Quiz: {current_quiz.id}")
+        print(f"Quiz: {game_answer}")
+        if message.content == game_answer and message.reference.message_id == current_quiz.id:
+            print("Correct Anser")
     user = message.author
     if user == client.user:
         return
