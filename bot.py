@@ -22,7 +22,7 @@ def to_thread(func: typing.Callable) -> typing.Coroutine:
 
 
 TOKEN = 'MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
-RIOT = 'RGAPI-51de3d04-597e-46d0-9e1d-1d2fbdfeb953'
+RIOT = 'RGAPI-2587d2a1-9566-4760-b3b6-ef1c020787d7'
 region = 'NA1'
 watcher = LolWatcher(api_key=RIOT)
 
@@ -514,6 +514,10 @@ def guess_quote(q):
         #    splitted.remove(qt)
         qt+=' '
     question = ' '.join(splitted)[1:]
+    answer = list(answer)
+    if "_" in answer:
+        answer.remove("_")
+    answer=''.join(answer)
     return (question, answer)
 
 

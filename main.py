@@ -9,8 +9,7 @@ import bot
 intents = discord.Intents.all()
 client = commands.Bot(intents=intents)
 
-game_answer = ''
-current_quiz = ''
+game_answer = None
 hearth = 695056946616860729
 bird = 229401751281729536
 alex = 298206761587048448
@@ -41,8 +40,8 @@ help.add_field(name="View Hearth Stats", value='/stats [optional @User]', inline
 help.add_field(name="Link League Account", value='/link-lol [summoner name]', inline=False)
 help.add_field(name="View League Stats", value='/lol-stats [optional @User]', inline=False)
 help.add_field(name="View League Leaderboard", value='/lol-top', inline=False)
-help.add_field(name="Say hello", value='/hello', inline=False)
-help.add_field(name="Read a Random Quote", value='/random-quote', inline=False)
+help.add_field(name="Get a Random Quote", value='/random-quote', inline=False)
+help.add_field(name="Guess who said the Quote", value='/answer', inline=False)
 help.add_field(name="Get Bot Commands", value='/help', inline=False)
 
 
@@ -62,12 +61,6 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if message.reference:
-        print(f"What needs to = quiz: {message.reference.message_id}")
-        print(f"Quiz: {current_quiz.id}")
-        print(f"Quiz: {game_answer}")
-        if message.content == game_answer and message.reference.message_id == current_quiz.id:
-            print("Correct Anser")
     user = message.author
     if user == client.user:
         return
@@ -225,10 +218,25 @@ async def random_quote(ctx):
     global current_quiz, game_answer
     question = (bot.random_quote())
     game_answer= question[1]
-    current_quiz = await ctx.respond(question[0])
+    print(game_answer)
+    current_quiz = await ctx.respond(f'{question[0]}')
 
 
+@client.slash_command(name="answer", guild_ids=[hearth],
+                      description="Answer a Quote Quiz")
+async def ans(ctx, answer:discord.Option(discord.User, required = True,  description="Who said the quote")):
+    player = ctx.user
+    global game_answer
+    if game_answer:
+        if str(answer.id) in game_answer:
+            await ctx.respond(f"✅{player.mention} Guessed The Quote!✅\nIt was {answer.mention}")
+            game_answer = None
+        else:
+            await ctx.respond("❌Wrong Answer❌")
+        print(answer.id)
 
+    else:
+        await ctx.respond("No games running")
 
 
 
