@@ -273,6 +273,7 @@ async def on_voice_state_update(member,before,after):
             await general.send('https://tenor.com/view/i-just-wish-tiff-were-here-brendan-scannell-pete-bonding-i-want-to-see-tiff-gif-16542187')
             await general.send('https://tenor.com/view/tiffany-lupels-lupels-tiffany-tiffany-of-lopels-tiffany-of-lupelz-gif-14921736')
         elif before.channel and after.channel and after.self_mute and not before.self_mute:
+
             await general.send('https://tenor.com/view/tyra-banks-be-quiet-tiffany-bye-gif-8741675')
 
 
