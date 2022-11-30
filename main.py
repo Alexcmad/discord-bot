@@ -270,7 +270,7 @@ async def ans(ctx, answer: discord.Option(str, required=True, description="Name 
     player = ctx.user
     global game_answer, current_audio
     if game_answer and current_audio:
-        if str.upper(answer) in str.upper(game_answer[0]) and len(answer) > (len(game_answer) / 3):
+        if str.upper(answer) in str.upper(game_answer[0]) and len(answer) > (len(game_answer[0]) / 3):
             await ctx.respond(f"✅{player.mention} Guessed The Song!✅\nIt was {game_answer[0]} - {game_answer[1]}")
             current_audio = None
             game_answer = None
@@ -505,7 +505,7 @@ async def on_voice_state_update(member, before, after):
     if member.id == bird:
         if after.channel and not before.channel:
             vc = await after.channel.connect(timeout=2)
-            await asyncio.sleep(.5)
+            await asyncio.sleep(1)
             file = discord.FFmpegPCMAudio(f'Suck yuh modda ({random.randint(0, 5)}).m4a')
             vc.play(file)
             await asyncio.sleep(2.5)
