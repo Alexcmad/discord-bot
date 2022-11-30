@@ -1,13 +1,10 @@
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyClientCredentials
 
 client_id = '749884c5a83646918ec0195862a18d03'
 secret = '7df5024194cd42868f8a29695184f7ec'
-redirect_url = 'http://google.com/callback'
-scope = "user-read-recently-played"
 
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=client_id, client_secret=secret,
-                                               redirect_uri=redirect_url, scope=scope))
+sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=client_id, client_secret=secret))
 
 Plink = 'https://open.spotify.com/playlist/2rjF7l4Q5LbpMJjXMXCas3?si=7ef1092083ed4aa8'
 

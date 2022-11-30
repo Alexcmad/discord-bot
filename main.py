@@ -8,10 +8,14 @@ import bot
 import spotify
 import nacl
 import youtube_dl
+import ffmpeg
 
 intents = discord.Intents.all()
+intents.voice_states = True
+intents.guilds = True
 client = commands.Bot(intents=intents)
 
+7
 game_answer = None
 hearth = 695056946616860729
 hearthGeneral = 742448286702633092
@@ -255,38 +259,55 @@ async def ans(ctx, answer: discord.Option(discord.User, required=True, descripti
                       description="Play a spotify playlist")
 async def play(ctx, playlist_link: discord.Option(str, required=True, description="Playlist Link")):
     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-    YDL_OPTIONS = {'format':"bestaudio"}
+    YDL_OPTIONS = {'format': "m4a", 'postprocessors':
+        [{'key':'FFmpegExtractAudio',
+          'preferredcodec':'m4a'}]}
+    vc = None
+
+    if ctx.user.voice:
+        v_channel = ctx.user.voice.channel
+        if not ctx.voice_client:
+            await ctx.respond("connect with /join")
+        else:
+            vc = ctx.voice_client
+
+            playlist = spotify.get_playlist_items(playlist_link)
+            playlist_name = spotify.get_playlist_name(playlist_link)
+            playlist_owner = spotify.get_playlist_owner(playlist_link)
+            playlist_description = spotify.get_playlist_description(playlist_link)
+
+            song = spotify.get_track(choice(playlist))
+            songName = spotify.get_track_name(song)
+            songArtist = spotify.get_artist(song)
+
+            await ctx.respond(f"{ctx.user.mention} Is now playing {playlist_link}")
+            with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+                info = ydl.extract_info(f"ytsearch: {songName} {songArtist} lyrics", download=False)['entries'][0]
+                url2 = info['url']
+                source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
+                vc.play(source=source, after=lambda e: print('done', e))
+                print(vc.is_playing())
+
+
+    else:
+        await ctx.respond(no_vc())
+
+
+@client.slash_command(name="join", guild_ids=[hearth],
+                      description="Let bot join a vc")
+async def join(ctx):
     vc = None
 
     if ctx.user.voice:
         v_channel = ctx.user.voice.channel
         if not ctx.voice_client:
             await v_channel.connect()
-            vc = ctx.voice_client
+            await ctx.respond ("I'm in.")
         else:
-            vc = ctx.voice_client
-
-
-        playlist = spotify.get_playlist_items(playlist_link)
-        playlist_name = spotify.get_playlist_name(playlist_link)
-        playlist_owner = spotify.get_playlist_owner(playlist_link)
-        playlist_description = spotify.get_playlist_description(playlist_link)
-
-        song = spotify.get_track(choice(playlist))
-        songName = spotify.get_track_name(song)
-        songArtist = spotify.get_artist(song)
-
-        await ctx.respond(f"{ctx.user.mention} Is now playing {playlist_link}")
-
-        with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(f"ytsearch:{songName} {songArtist} lyrics", download=False)['entries'][0]
-            url2 = info['formats'][0]['url']
-            source = await discord.FFmpegOpusAudio.from_probe(url2,**FFMPEG_OPTIONS)
-            vc.play(source, after=lambda  e: print('done', e))
-            vc.is_playing()
-
+            await ctx.respond ("I'm already in.")
     else:
         await ctx.respond(no_vc())
+
 
 
 def no_vc():
