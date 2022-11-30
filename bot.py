@@ -489,7 +489,7 @@ def leaderboard(sort):
         , "l_assists": "***💖Leaderboard of Assists💖***"
         , "l_quadras": "***💖🗡🗡🗡🗡Leaderboard of Quadras🗡🗡🗡🗡💖***"
         , "guessed_songs": "🎹🎺🎵***Leaderboard of Songs🎵🎺🎹***"
-        , "count": "💪🏾💪🏾***Leaderboard of Songs💪🏾💪🏾***"
+        , "count": "💪🏾💪🏾***Leaderboard of Pushups💪🏾💪🏾***"
         , "counted": "✖️🔢***Leaderboard of Count🔢✖️***"
             }
     board = discord.Embed(title=desc.get(sort), colour=choice(colors))
