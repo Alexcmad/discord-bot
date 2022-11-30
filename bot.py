@@ -67,7 +67,7 @@ def add_user(user):
             "l_pentas": 0,
             "l_assists": 0,
             "l_quadras": 0,
-            "guessed_songs":0
+            "guessed_songs": 0
             }
 
 
@@ -149,9 +149,11 @@ def total_count(user):
     l = users.search(User.ID == get_ID(user))[0].get('counted')
     return l
 
+
 def guessed_songs(user):
     l = users.search(User.ID == get_ID(user))[0].get('guessed_songs')
     return l
+
 
 def stats(user):
     is_user(user)
@@ -159,12 +161,12 @@ def stats(user):
     embed.add_field(name="💪🏾Pushups Done💪🏾", value=total_pushups(user), inline=True)
     embed.add_field(name="📝Pushups Due📝", value=due(user), inline=True)
     embed.add_field(name="💀L's💀", value=total_L(user), inline=True)
-    #embed.add_field(name=u'\u200b', value=u'\u200b')
+    # embed.add_field(name=u'\u200b', value=u'\u200b')
     embed.add_field(name="🔢Times Counted🔢", value=total_count(user), inline=True)
     embed.add_field(name="🎵Songs Guessed🎵", value=guessed_songs(user), inline=True)
-    #embed.add_field(name=u'\u200b', value=u'\u200b')
+    # embed.add_field(name=u'\u200b', value=u'\u200b')
     embed.add_field(name="🧐Random Quote🧐", value=get_quote(user), inline=False)
-    #embed.add_field(name=u'\u200b', value=u'\u200b')
+    # embed.add_field(name=u'\u200b', value=u'\u200b')
 
     return embed
 
@@ -258,8 +260,11 @@ def get_summoner(pID):
 def get_level(pID):
     return watcher.summoner.by_puuid(region=region, encrypted_puuid=pID)['summonerLevel']
 
+
 def get_usr_kda(user):
-    return round(get_usr_kills(user) / get_usr_deaths(user),2)
+    return round(get_usr_kills(user) / get_usr_deaths(user), 2)
+
+
 def lol_stats(user):
     is_user(user)
     userid = get_ID(user)
@@ -272,23 +277,23 @@ def lol_stats(user):
     embed.add_field(name="Level", value=get_level(pID), inline=True)
     embed.add_field(name="Total Games🎮", value=get_usr_games(user), inline=True)
 
-    #embed.add_field(name=u'\u200b', value=u'\u200b')
+    # embed.add_field(name=u'\u200b', value=u'\u200b')
     embed.add_field(name="Wins🥇", value=get_usr_wins(user), inline=True)
     embed.add_field(name="Losses🥲", value=get_usr_losses(user), inline=True)
-    embed.add_field(name="W/R Ratio", value=round(get_usr_wins(user)/get_usr_losses(user),2), inline=True)
-    #embed.add_field(name=u'\u200b', value=u'\u200b')
+    embed.add_field(name="W/R Ratio", value=round(get_usr_wins(user) / get_usr_losses(user), 2), inline=True)
+    # embed.add_field(name=u'\u200b', value=u'\u200b')
     embed.add_field(name="K/D Ratio", value=get_usr_kda(user), inline=True)
     embed.add_field(name="Win Streak👑", value=get_usr_winstreak(user), inline=True)
     embed.add_field(name="Loss Streak🐵", value=get_usr_lossstreak(user), inline=True)
-    #embed.add_field(name=u'\u200b', value=u'\u200b')
+    # embed.add_field(name=u'\u200b', value=u'\u200b')
     embed.add_field(name="Kills🗡", value=get_usr_kills(user), inline=True)
     embed.add_field(name="Deaths⚰️", value=get_usr_deaths(user), inline=True)
     embed.add_field(name="Assists💖", value=get_usr_assists(user), inline=True)
-    #embed.add_field(name=u'\u200b', value=u'\u200b')
+    # embed.add_field(name=u'\u200b', value=u'\u200b')
     embed.add_field(name="Most Kills🔥", value=get_usr_max_kill(user), inline=True)
     embed.add_field(name="Pentas☠️", value=get_usr_pentas(user), inline=True)
     embed.add_field(name="Quadras😐", value=get_usr_quadras(user), inline=True)
-    #embed.add_field(name=u'\u200b', value=u'\u200b')
+    # embed.add_field(name=u'\u200b', value=u'\u200b')
 
     return embed
 
@@ -339,8 +344,8 @@ def update_20():
                   "l_win_streak": 0,
                   "l_loss_streak": 0,
                   "l_pentas": 0,
-                  "l_assists":0,
-                  "l_quadras":0
+                  "l_assists": 0,
+                  "l_quadras": 0
                   })
     for user in users.all():
 
@@ -384,11 +389,14 @@ def get_deaths(player):
 def get_penta(player):
     return player['pentaKills']
 
+
 def get_assist(player):
     return player['assists']
 
+
 def get_quadras(player):
     return player['quadraKills']
+
 
 def player_update(game, pID):
     player = get_player(game, pID)
@@ -449,11 +457,14 @@ def get_usr_pentas(user):
 def get_usr_games(user):
     return users.search(User.ID == get_ID(user))[0].get('l_games')
 
+
 def get_usr_assists(user):
     return users.search(User.ID == get_ID(user))[0].get('l_assists')
 
+
 def get_usr_quadras(user):
     return users.search(User.ID == get_ID(user))[0].get('l_quadras')
+
 
 def get_usr_max_kill(user):
     return users.search(User.ID == get_ID(user))[0].get('l_max_kill')
@@ -473,11 +484,13 @@ def leaderboard(sort):
             "l_losses": "***😐Leaderboard of Losses😐***",
             "l_win_streak": "***🔥Leaderboard of Win Streaks🔥***",
             "l_loss_streak": "***😐Leaderboard of Loss Streaks😐***"
-            ,"l_max_kill": "***🔥🗡️🔥Most Kills in One Game!🔥🗡️🔥***"
-            ,"l_games": "***🎮Most Games Played🎮***"
+        , "l_max_kill": "***🔥🗡️🔥Most Kills in One Game!🔥🗡️🔥***"
+        , "l_games": "***🎮Most Games Played🎮***"
         , "l_assists": "***💖Leaderboard of Assists💖***"
         , "l_quadras": "***💖🗡🗡🗡🗡Leaderboard of Quadras🗡🗡🗡🗡💖***"
-            ,"guessed_songs" : "🎹🎺🎵***Leaderboard of Songs🎵🎺🎹***"
+        , "guessed_songs": "🎹🎺🎵***Leaderboard of Songs🎵🎺🎹***"
+        , "count": "💪🏾💪🏾***Leaderboard of Songs💪🏾💪🏾***"
+        , "counted": "✖️🔢***Leaderboard of Count🔢✖️***"
             }
     board = discord.Embed(title=desc.get(sort), colour=choice(colors))
     board.set_footer(text="Use the menu to change Leaderboard Types")
@@ -499,35 +512,36 @@ def leaderboard(sort):
         return board
     return board
 
+
 def random_quote():
-    quotes = choice(users.search(User.quote!=[])).get("quote")
+    quotes = choice(users.search(User.quote != [])).get("quote")
     if len(quotes) < 1:
         random_quote()
     q = choice(quotes)
-    if len(q.split())>1:
+    if len(q.split()) > 1:
         if guess_quote(q)[0]:
             return guess_quote(q)
     else:
         random_quote()
 
+
 def guess_quote(q):
     splitted = q.split()
-    print (splitted)
+    print(splitted)
     answer = ''
     for qt in splitted:
         if qt.startswith('<@'):
             answer = qt
             splitted.remove(qt)
-        #elif qt.startswith('~') or qt.startswith('-'):
+        # elif qt.startswith('~') or qt.startswith('-'):
         #    splitted.remove(qt)
-        qt+=' '
+        qt += ' '
     question = ' '.join(splitted)[1:]
     answer = list(answer)
     if "_" in answer:
         answer.remove("_")
-    answer=''.join(answer)
+    answer = ''.join(answer)
     return (question, answer)
-
 
 
 def player_update(game, pID):

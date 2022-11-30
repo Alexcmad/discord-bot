@@ -40,7 +40,9 @@ sorts = ["l_wins",
          "l_games",
          "l_win_streak",
          "l_loss_streak",
-         "guessed_songs"
+         "guessed_songs",
+         "count",
+         "counted"
          ]
 
 birds = ["🦃", "🐔", "🐓", "🐣", "🐤", "🐥", "🐦", "🦆", "🐧"]
@@ -219,7 +221,9 @@ ops = ["Wins",
        "Games Played",
        "Win Streak",
        "Loss Streak",
-       "Guessed Songs"
+       "Guessed Songs",
+       "Pushups Done",
+       "Times Counted"
        ]
 boards = [discord.SelectOption(label=x, value=y) for x, y in zip(ops, sorts)]
 
