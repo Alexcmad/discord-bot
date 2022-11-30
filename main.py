@@ -260,7 +260,7 @@ async def ans(ctx, answer: discord.Option(discord.User, required=True, descripti
                       description="Play a spotify playlist")
 async def play(ctx, playlist_link: discord.Option(str, required=True, description="Playlist Link")):
     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-    YDL_OPTIONS = {'format': "m4a", 'postprocessors':
+    YDL_OPTIONS = {'format': "bestaudio", 'postprocessors':
         [{'key':'FFmpegExtractAudio',
           'preferredcodec':'m4a'}]}
     vc = None
