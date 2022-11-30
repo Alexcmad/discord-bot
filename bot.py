@@ -66,7 +66,8 @@ def add_user(user):
             "l_loss_streak": 0,
             "l_pentas": 0,
             "l_assists": 0,
-            "l_quadras": 0
+            "l_quadras": 0,
+            "guessed_songs":0
             }
 
 
@@ -148,17 +149,23 @@ def total_count(user):
     l = users.search(User.ID == get_ID(user))[0].get('counted')
     return l
 
+def guessed_songs(user):
+    l = users.search(User.ID == get_ID(user))[0].get('guessed_songs')
+    return l
 
 def stats(user):
     is_user(user)
     embed = discord.Embed(title=f"{get_name(user)}'s Profile", colour=choice(colors))
-    embed.add_field(name="Pushups Done", value=total_pushups(user), inline=False)
-    embed.add_field(name="Pushups Due", value=due(user), inline=False)
-    embed.add_field(name="L's", value=total_L(user), inline=False)
-    embed.add_field(name="Times Counted", value=total_count(user), inline=False)
-    embed.add_field(name="Random Quote", value=get_quote(user), inline=False)
-    # l = f"{user.mention}'s Profile:\nTotal Pushups Done: {total_pushups(user)}\nL's Taken: {total_L(user)}\nTimes Counted: {total_count(user)}\nLatest Quote: {get_quote(user)}"
-    # print(f"'s Profile: {l}")
+    embed.add_field(name="💪🏾Pushups Done💪🏾", value=total_pushups(user), inline=True)
+    embed.add_field(name="📝Pushups Due📝", value=due(user), inline=True)
+    embed.add_field(name="💀L's💀", value=total_L(user), inline=True)
+    #embed.add_field(name=u'\u200b', value=u'\u200b')
+    embed.add_field(name="🔢Times Counted🔢", value=total_count(user), inline=True)
+    embed.add_field(name="🎵Songs Guessed🎵", value=guessed_songs(user), inline=True)
+    #embed.add_field(name=u'\u200b', value=u'\u200b')
+    embed.add_field(name="🧐Random Quote🧐", value=get_quote(user), inline=False)
+    #embed.add_field(name=u'\u200b', value=u'\u200b')
+
     return embed
 
 
@@ -548,3 +555,7 @@ def player_update(game, pID):
         users.update(dbop.increment('l_losses'), User.pID == pID)
         users.update({'l_win_streak': 0}, User.pID == pID)
         users.update(dbop.increment('l_loss_streak'), User.pID == pID)
+
+
+def guessed(user):
+    users.update(dbop.increment('guessed_songs'), User.ID == get_ID(user))

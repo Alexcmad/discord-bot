@@ -16,8 +16,11 @@ intents.voice_states = True
 intents.guilds = True
 client = commands.Bot(intents=intents)
 
-7
+current_audio = None
+moreCount = 0
 game_answer = None
+secs = 3
+playlist = None
 hearth = 695056946616860729
 hearthGeneral = 742448286702633092
 bird = 229401751281729536
@@ -49,6 +52,11 @@ help.add_field(name="Do Pushups", value='/pushup', inline=False)
 help.add_field(name="View Hearth Stats", value='/stats [optional @User]', inline=False)
 help.add_field(name="Link League Account", value='/link-lol [summoner name]', inline=False)
 help.add_field(name="View League Stats", value='/lol-stats [optional @User]', inline=False)
+help.add_field(name="Join VC", value='/join', inline=False)
+help.add_field(name="Play Guess The Song", value='/play [spotify playlist link] [optional amount of seconds]', inline=False)
+help.add_field(name="Guess the song", value='/guess [song name] (you need to get at least 2/3 of the name)', inline=False)
+help.add_field(name="Play more of the song if you cant guess", value='/more', inline=False)
+help.add_field(name="Play another Round", value='/next-round', inline=False)
 help.add_field(name="View League Leaderboard", value='/lol-top', inline=False)
 help.add_field(name="Get a Random Quote", value='/random-quote', inline=False)
 help.add_field(name="Guess who said the Quote", value='/answer', inline=False)
@@ -256,13 +264,37 @@ async def ans(ctx, answer: discord.Option(discord.User, required=True, descripti
         await ctx.respond("No games running")
 
 
+@client.slash_command(name="guess", guild_ids=[hearth],
+                      description="Guess the Song")
+async def ans(ctx, answer: discord.Option(str, required=True, description="Name of The Song")):
+    player = ctx.user
+    global game_answer, current_audio
+    if game_answer and current_audio:
+        if str.upper(answer) in str.upper(game_answer[0]) and len(answer) > (len(game_answer) / 3):
+            await ctx.respond(f"✅{player.mention} Guessed The Song!✅\nIt was {game_answer[0]} - {game_answer[1]}")
+            current_audio = None
+            game_answer = None
+            bot.guessed(player)
+        else:
+            await ctx.respond("❌Wrong Answer❌")
+        print(game_answer)
+
+    else:
+        await ctx.respond("No games running")
+
+
 @client.slash_command(name="play", guild_ids=[hearth],
-                      description="Play a spotify playlist")
-async def play(ctx, playlist_link: discord.Option(str, required=True, description="Playlist Link")):
+                      description="Try to guess the name of a random song from a spotify playlist")
+async def play(ctx, playlist_link: discord.Option(str, required=True, description="Playlist Link"),
+               seconds: discord.Option(int, required=False,
+                                       description="The amount of seconds to play (default: 5, max: 10)", default=5)):
+    global game_answer, playlist, secs, moreCount
+    moreCount = 0
+    secs = seconds
     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-    YDL_OPTIONS = {'format': "bestaudio", 'postprocessors':
-        [{'key':'FFmpegExtractAudio',
-          'preferredcodec':'m4a'}]}
+    YDL_OPTIONS = {'format': "m4a/bestaudio/mp4/mp3", 'noplaylist': 'True', 'postprocessors':
+        [{'key': 'FFmpegExtractAudio',
+          'preferredcodec': 'm4a'}]}
     vc = None
 
     if ctx.user.voice:
@@ -277,21 +309,123 @@ async def play(ctx, playlist_link: discord.Option(str, required=True, descriptio
             playlist_owner = spotify.get_playlist_owner(playlist_link)
             playlist_description = spotify.get_playlist_description(playlist_link)
 
-            song = spotify.get_track(choice(playlist))
-            songName = spotify.get_track_name(song)
-            songArtist = spotify.get_artist(song)
-
-            await ctx.respond(f"{ctx.user.mention} Is now playing {playlist_link}")
-            with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
-                info = ydl.extract_info(f"ytsearch: {songName} {songArtist} lyrics", download=False)['entries'][0]
-                url2 = info['url']
-                source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
-                vc.play(source=source, after=lambda e: print('done', e))
-                print(vc.is_playing())
+            async def play_rand():
+                vc.volume = .40
+                global game_answer, current_audio
+                song = spotify.get_track(choice(playlist))
+                songName = spotify.get_track_name(song)
+                songArtist = spotify.get_artist(song)
+                game_answer = [songName,songArtist]
 
 
+                await ctx.respond(
+                    f"{ctx.user.mention} Started a guess the song from {playlist_name}\nAnswer with /guess [song name]\nFirst to answer Wins!")
+                with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+                    info = ydl.extract_info(f"ytsearch: {songName} {songArtist} lyrics", download=False)['entries'][0]
+                    url2 = info['url']
+                    current_audio = source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
+                    vc.play(source=source, after=lambda e: print('done', e))
+                    await ctx.send(
+                        "What is that ***MELODY?***\nhttps://tenor.com/view/creepy-what-is-the-melody-gif-19298771")
+                    await asyncio.sleep(seconds)
+                    vc.pause()
+                    print(vc.is_playing())
+
+            try:
+                await play_rand()
+            except:
+                await ctx.respond("That Song Can't be played, try again")
     else:
         await ctx.respond(no_vc())
+
+
+@client.slash_command(name="next-round", guild_ids=[hearth],
+                      description="Play another round of guess the song with the current playlist")
+async def next(ctx):
+    global playlist, moreCount
+    moreCount = 0
+    if playlist:
+        await ctx.respond("Next Round!")
+        FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+                          'options': '-vn'}
+        YDL_OPTIONS = {'format': "m4a/bestaudio/mp4/mp3", 'noplaylist': 'True', 'postprocessors':
+            [{'key': 'FFmpegExtractAudio',
+              'preferredcodec': 'm4a'}]}
+        vc = None
+
+        if ctx.user.voice:
+            v_channel = ctx.user.voice.channel
+            if not ctx.voice_client:
+                await ctx.respond("connect with /join")
+            else:
+                vc = ctx.voice_client
+
+                async def play_rand():
+                    global game_answer, current_audio
+                    song = spotify.get_track(choice(playlist))
+                    songName = spotify.get_track_name(song)
+                    songArtist = spotify.get_artist(song)
+                    game_answer = [songName, songArtist]
+
+                    with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+                        vc.volume = .40
+                        info = ydl.extract_info(f"ytsearch: {songName} {songArtist} lyrics", download=False)['entries'][
+                            0]
+                        url2 = info['url']
+                        current_audio = source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
+                        vc.play(source=source, after=lambda e: print('done', e))
+                        await ctx.send("What is that ***MELODY?***")
+                        await asyncio.sleep(secs)
+                        vc.pause()
+                        print(vc.is_playing())
+
+                try:
+                    await play_rand()
+                except:
+                    await ctx.respond("That Song Can't be played, try again")
+        else:
+            await ctx.respond(no_vc())
+    else:
+        await ctx.respond("No game running")
+
+
+@client.slash_command(name="more", guild_ids=[hearth],
+                      description="Play more of the song")
+async def more(ctx):
+    global playlist, moreCount, current_audio
+    moreNum = 5
+    if moreCount >= 3:
+        await ctx.respond(f"OMG UR SO DUMB it was {game_answer[0]} 🐒🐵🐒🙊🙈🙉🐒")
+        ctx.voice_client.stop()
+        current_audio = None
+        moreCount = 0
+
+    else:
+        if moreCount == 1:
+            moreNum = 10
+        elif moreCount == 2:
+            moreNum = 15
+
+        if playlist and ctx.voice_client.is_paused():
+            await ctx.respond(f"Playing {moreNum} more seconds...")
+
+            if ctx.user.voice:
+                v_channel = ctx.user.voice.channel
+                if not ctx.voice_client:
+                    await ctx.respond("connect with /join")
+                else:
+                    vc = ctx.voice_client
+                    vc.volume = .40
+                    vc.resume()
+                    await ctx.send("What is that ***MELODY?***")
+                    await asyncio.sleep(moreNum)
+                    vc.pause()
+                    print(vc.is_playing())
+            else:
+                await ctx.respond(no_vc())
+            moreCount += 1
+        else:
+            await ctx.respond("No game running, either start a new one with /play or try /next-round")
 
 
 @client.slash_command(name="join", guild_ids=[hearth],
@@ -302,13 +436,12 @@ async def join(ctx):
     if ctx.user.voice:
         v_channel = ctx.user.voice.channel
         if not ctx.voice_client:
-            await v_channel.connect(timeout = 10)
-            await ctx.respond ("I'm in.")
+            await v_channel.connect(timeout=10)
+            await ctx.respond("I'm in.")
         else:
-            await ctx.respond ("I'm already in.")
+            await ctx.respond("I'm already in.")
     else:
         await ctx.respond(no_vc())
-
 
 
 def no_vc():
@@ -325,6 +458,7 @@ async def disconnect(ctx):
     vc = ctx.voice_client
     if vc:
         if ctx.user.voice.channel == vc.channel:
+            vc.cleanup()
             await vc.disconnect()
             await ctx.respond("Disconnected")
         else:
@@ -370,14 +504,11 @@ async def on_voice_state_update(member, before, after):
 
     if member.id == bird:
         if after.channel and not before.channel:
-            vc = await after.channel.connect(timeout = 2)
-            file = discord.FFmpegPCMAudio('Suck yuh modda.m4a')
+            vc = await after.channel.connect(timeout=2)
+            file = discord.FFmpegPCMAudio(f'Suck yuh modda ({random.randint(0, 5)}).m4a')
             vc.play(file)
             await asyncio.sleep(2)
             await vc.disconnect()
-
-
-
 
 
 client.run(bot.TOKEN)
