@@ -5,6 +5,9 @@ import random
 import discord
 from discord.ext import commands
 import bot
+import spotify
+import nacl
+import youtube_dl
 
 intents = discord.Intents.all()
 client = commands.Bot(intents=intents)
@@ -188,45 +191,52 @@ async def pushup(ctx, amount: discord.Option(int, description="Amount of Pushups
     else:
         await ctx.respond("This isn't the channel for that!")
 
+
 ops = ["Wins",
-         "Losses",
-         "Kills",
-         "Deaths",
-         "Most Kills in One Game",
-         "Assists",
-         "Pentas",
-         "Quadras",
-         "Games Played",
-         "Win Streak",
-         "Loss Streak"
-         ]
-boards = [discord.SelectOption(label=x,value=y) for x,y in zip(ops,sorts)]
+       "Losses",
+       "Kills",
+       "Deaths",
+       "Most Kills in One Game",
+       "Assists",
+       "Pentas",
+       "Quadras",
+       "Games Played",
+       "Win Streak",
+       "Loss Streak"
+       ]
+boards = [discord.SelectOption(label=x, value=y) for x, y in zip(ops, sorts)]
+
+
 class bView(discord.ui.View):
     async def on_timeout(self):
         for child in self.children:
             child.disabled = True
         await self.message.delete()
-    @discord.ui.select(placeholder="Choose a Leaderboard",min_values=1, max_values=1,options= boards)
-    async def select_callback(self,select,interaction):
-        await interaction.response.edit_message(embed = bot.leaderboard(select.values[0]))
+
+    @discord.ui.select(placeholder="Choose a Leaderboard", min_values=1, max_values=1, options=boards)
+    async def select_callback(self, select, interaction):
+        await interaction.response.edit_message(embed=bot.leaderboard(select.values[0]))
+
+
 @client.slash_command(name="lol-top", guild_ids=[hearth],
                       description="View League Leaderboards")
 async def lol_top(ctx):
-    await ctx.respond(embed=bot.leaderboard("l_wins"),view=bView(timeout=30))
+    await ctx.respond(embed=bot.leaderboard("l_wins"), view=bView(timeout=30))
+
 
 @client.slash_command(name="random-quote", guild_ids=[hearth],
                       description="Read a Random Quote")
 async def random_quote(ctx):
     global current_quiz, game_answer
     question = (bot.random_quote())
-    game_answer= question[1]
+    game_answer = question[1]
     print(game_answer)
     current_quiz = await ctx.respond(f'{question[0]}')
 
 
 @client.slash_command(name="answer", guild_ids=[hearth],
                       description="Answer a Quote Quiz")
-async def ans(ctx, answer:discord.Option(discord.User, required = True,  description="Who said the quote")):
+async def ans(ctx, answer: discord.Option(discord.User, required=True, description="Who said the quote")):
     player = ctx.user
     global game_answer
     if game_answer:
@@ -241,6 +251,64 @@ async def ans(ctx, answer:discord.Option(discord.User, required = True,  descrip
         await ctx.respond("No games running")
 
 
+@client.slash_command(name="play", guild_ids=[hearth],
+                      description="Play a spotify playlist")
+async def play(ctx, playlist_link: discord.Option(str, required=True, description="Playlist Link")):
+    FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+    YDL_OPTIONS = {'format':"bestaudio"}
+    vc = None
+
+    if ctx.user.voice:
+        v_channel = ctx.user.voice.channel
+        if not ctx.voice_client:
+            await v_channel.connect()
+            vc = ctx.voice_client
+        else:
+            vc = ctx.voice_client
+
+
+        playlist = spotify.get_playlist_items(playlist_link)
+        playlist_name = spotify.get_playlist_name(playlist_link)
+        playlist_owner = spotify.get_playlist_owner(playlist_link)
+        playlist_description = spotify.get_playlist_description(playlist_link)
+
+        song = spotify.get_track(choice(playlist))
+        songName = spotify.get_track_name(song)
+        songArtist = spotify.get_artist(song)
+
+        await ctx.respond(f"{ctx.user.mention} Is now playing {playlist_link}")
+
+        with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+            info = ydl.extract_info(f"ytsearch:{songName} {songArtist} lyrics", download=False)['entries'][0]
+            url2 = info['formats'][0]['url']
+            source = await discord.FFmpegOpusAudio.from_probe(url2,**FFMPEG_OPTIONS)
+            vc.play(source, after=lambda  e: print('done', e))
+            vc.is_playing()
+
+    else:
+        await ctx.respond(no_vc())
+
+
+def no_vc():
+    return "Get in a VC first"
+
+
+def same_vc():
+    return "You need to be in the same VC as the bot to do this"
+
+
+@client.slash_command(name="disconnect", guild_ids=[hearth],
+                      description="disconnect the bot from vc")
+async def disconnect(ctx):
+    vc = ctx.voice_client
+    if vc:
+        if ctx.user.voice.channel == vc.channel:
+            await vc.disconnect()
+            await ctx.respond("Disconnected")
+        else:
+            await ctx.respond(same_vc())
+    else:
+        await ctx.respond("Bot Aint even Connected")
 
 
 @discord.ext.tasks.loop(minutes=5, reconnect=True)
@@ -263,20 +331,20 @@ async def test(ctx):
 
 
 @client.event
-async def on_voice_state_update(member,before,after):
+async def on_voice_state_update(member, before, after):
     general = client.get_channel(hearthGeneral)
     if member.id == tiff:
         if after.channel and not before.channel:
             await general.send('https://tenor.com/view/tiffany-adonis-otogari-adonis-enstars-gif-19915582')
             await general.send('https://tenor.com/view/guilty-gear-may-tiff-skroup-gif-24321805')
         elif not after.channel:
-            await general.send('https://tenor.com/view/i-just-wish-tiff-were-here-brendan-scannell-pete-bonding-i-want-to-see-tiff-gif-16542187')
-            await general.send('https://tenor.com/view/tiffany-lupels-lupels-tiffany-tiffany-of-lopels-tiffany-of-lupelz-gif-14921736')
+            await general.send(
+                'https://tenor.com/view/i-just-wish-tiff-were-here-brendan-scannell-pete-bonding-i-want-to-see-tiff-gif-16542187')
+            await general.send(
+                'https://tenor.com/view/tiffany-lupels-lupels-tiffany-tiffany-of-lopels-tiffany-of-lupelz-gif-14921736')
         elif before.channel and after.channel and after.self_mute and not before.self_mute:
 
             await general.send('https://tenor.com/view/tyra-banks-be-quiet-tiffany-bye-gif-8741675')
-
-
 
 
 client.run(bot.TOKEN)
