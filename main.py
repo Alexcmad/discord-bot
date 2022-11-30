@@ -11,8 +11,10 @@ client = commands.Bot(intents=intents)
 
 game_answer = None
 hearth = 695056946616860729
+hearthGeneral = 742448286702633092
 bird = 229401751281729536
 alex = 298206761587048448
+tiff = 266656358512852992
 prefix = 'i am incredibly homosexual'
 hearth_p = 832504799533596673
 pg = False
@@ -258,6 +260,22 @@ async def test(ctx):
     print(ctx.user)
     print(ctx.channel)
     await ctx.respond("It Worked")
+
+
+@client.event
+async def on_voice_state_update(member,before,after):
+    general = client.get_channel(hearthGeneral)
+    if member.id == tiff:
+        if after.channel and not before.channel:
+            await general.send('https://tenor.com/view/tiffany-adonis-otogari-adonis-enstars-gif-19915582')
+            await general.send('https://tenor.com/view/guilty-gear-may-tiff-skroup-gif-24321805')
+        elif not after.channel:
+            await general.send('https://tenor.com/view/i-just-wish-tiff-were-here-brendan-scannell-pete-bonding-i-want-to-see-tiff-gif-16542187')
+            await general.send('https://tenor.com/view/tiffany-lupels-lupels-tiffany-tiffany-of-lopels-tiffany-of-lupelz-gif-14921736')
+        elif before.channel and after.channel and after.self_mute and not before.self_mute:
+            await general.send('https://tenor.com/view/tyra-banks-be-quiet-tiffany-bye-gif-8741675')
+
+
 
 
 client.run(bot.TOKEN)
