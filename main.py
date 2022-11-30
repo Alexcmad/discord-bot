@@ -505,9 +505,10 @@ async def on_voice_state_update(member, before, after):
     if member.id == bird:
         if after.channel and not before.channel:
             vc = await after.channel.connect(timeout=2)
+            await asyncio.sleep(.5)
             file = discord.FFmpegPCMAudio(f'Suck yuh modda ({random.randint(0, 5)}).m4a')
             vc.play(file)
-            await asyncio.sleep(2)
+            await asyncio.sleep(2.5)
             await vc.disconnect()
 
 
