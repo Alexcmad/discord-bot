@@ -475,7 +475,7 @@ def get_game(game):
 
 
 def leaderboard(sort):
-    playsLol = users.search((User.pID != None))
+    playsLol = users.search((User.ID != None))
     list = sorted(playsLol, key=lambda d: d[sort], reverse=True)
     desc = {"l_wins": "***👑🥇Leaderboard of Wins🥇👑***",
             "l_kills": "***🗡️Leaderboard of Kills🗡️***",
