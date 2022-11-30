@@ -218,7 +218,8 @@ ops = ["Wins",
        "Quadras",
        "Games Played",
        "Win Streak",
-       "Loss Streak"
+       "Loss Streak",
+       "Guessed Songs"
        ]
 boards = [discord.SelectOption(label=x, value=y) for x, y in zip(ops, sorts)]
 
