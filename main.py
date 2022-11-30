@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import time
 from random import choice
@@ -301,7 +302,7 @@ async def join(ctx):
     if ctx.user.voice:
         v_channel = ctx.user.voice.channel
         if not ctx.voice_client:
-            await v_channel.connect()
+            await v_channel.connect(timeout = 10)
             await ctx.respond ("I'm in.")
         else:
             await ctx.respond ("I'm already in.")
@@ -366,6 +367,17 @@ async def on_voice_state_update(member, before, after):
         elif before.channel and after.channel and after.self_mute and not before.self_mute:
 
             await general.send('https://tenor.com/view/tyra-banks-be-quiet-tiffany-bye-gif-8741675')
+
+    if member.id == bird:
+        if after.channel and not before.channel:
+            vc = await after.channel.connect(timeout = 2)
+            file = discord.FFmpegPCMAudio('Suck yuh modda.m4a')
+            vc.play(file)
+            await asyncio.sleep(2)
+            await vc.disconnect()
+
+
+
 
 
 client.run(bot.TOKEN)
