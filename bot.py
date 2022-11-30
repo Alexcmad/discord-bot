@@ -477,6 +477,7 @@ def leaderboard(sort):
             ,"l_games": "***🎮Most Games Played🎮***"
         , "l_assists": "***💖Leaderboard of Assists💖***"
         , "l_quadras": "***💖🗡🗡🗡🗡Leaderboard of Quadras🗡🗡🗡🗡💖***"
+            ,"guessed_songs" : "🎹🎺🎵***Leaderboard of Songs🎵🎺🎹***"
             }
     board = discord.Embed(title=desc.get(sort), colour=choice(colors))
     board.set_footer(text="Use the menu to change Leaderboard Types")

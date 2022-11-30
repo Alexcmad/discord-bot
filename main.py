@@ -39,7 +39,8 @@ sorts = ["l_wins",
          "l_quadras",
          "l_games",
          "l_win_streak",
-         "l_loss_streak"
+         "l_loss_streak",
+         "guessed_songs"
          ]
 
 birds = ["🦃", "🐔", "🐓", "🐣", "🐤", "🐥", "🐦", "🦆", "🐧"]
@@ -53,8 +54,10 @@ help.add_field(name="View Hearth Stats", value='/stats [optional @User]', inline
 help.add_field(name="Link League Account", value='/link-lol [summoner name]', inline=False)
 help.add_field(name="View League Stats", value='/lol-stats [optional @User]', inline=False)
 help.add_field(name="Join VC", value='/join', inline=False)
-help.add_field(name="Play Guess The Song", value='/play [spotify playlist link] [optional amount of seconds]', inline=False)
-help.add_field(name="Guess the song", value='/guess [song name] (you need to get at least 2/3 of the name)', inline=False)
+help.add_field(name="Play Guess The Song", value='/play [spotify playlist link] [optional amount of seconds]',
+               inline=False)
+help.add_field(name="Guess the song", value='/guess [song name] (you need to get at least 2/3 of the name)',
+               inline=False)
 help.add_field(name="Play more of the song if you cant guess", value='/more', inline=False)
 help.add_field(name="Play another Round", value='/next-round', inline=False)
 help.add_field(name="View League Leaderboard", value='/lol-top', inline=False)
@@ -315,8 +318,7 @@ async def play(ctx, playlist_link: discord.Option(str, required=True, descriptio
                 song = spotify.get_track(choice(playlist))
                 songName = spotify.get_track_name(song)
                 songArtist = spotify.get_artist(song)
-                game_answer = [songName,songArtist]
-
+                game_answer = [songName, songArtist]
 
                 await ctx.respond(
                     f"{ctx.user.mention} Started a guess the song from {playlist_name}\nAnswer with /guess [song name]\nFirst to answer Wins!")
