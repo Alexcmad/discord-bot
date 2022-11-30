@@ -270,7 +270,7 @@ async def ans(ctx, answer: discord.Option(str, required=True, description="Name 
     player = ctx.user
     global game_answer, current_audio
     if game_answer and current_audio:
-        if str.upper(answer) in str.upper(game_answer[0]) and len(answer) > (len(game_answer[0]) / 3):
+        if str.upper(answer) in str.upper(game_answer[0]) and len(answer) > (len(game_answer[0].split('(')[0]) / 2):
             await ctx.respond(f"✅{player.mention} Guessed The Song!✅\nIt was {game_answer[0]} - {game_answer[1]}")
             current_audio = None
             game_answer = None
