@@ -523,7 +523,8 @@ async def on_voice_state_update(member, before, after):
                 await asyncio.sleep(7)
             await vc.disconnect()
     if member.id == doss:
-        await general.send("Beighbeigh")
+        if after.channel and not before.channel:
+            await general.send("Beighbeigh")
 
 
 client.run(bot.TOKEN)
