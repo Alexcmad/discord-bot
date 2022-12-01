@@ -26,6 +26,7 @@ hearthGeneral = 742448286702633092
 bird = 229401751281729536
 alex = 298206761587048448
 tiff = 266656358512852992
+doss = 316004737692598272
 prefix = 'i am incredibly homosexual'
 hearth_p = 832504799533596673
 pg = False
@@ -520,6 +521,14 @@ async def on_voice_state_update(member, before, after):
                 await asyncio.sleep(2.5)
             else:
                 await asyncio.sleep(7)
+            await vc.disconnect()
+    if member.id == doss:
+        if after.channel and not before.channel:
+            await asyncio.sleep(1)
+            vc = await after.channel.connect(timeout=2)
+            file = discord.FFmpegPCMAudio(f'beighbeigh.m4a')
+            vc.play(file)
+            await asyncio.sleep(2.5)
             await vc.disconnect()
 
 
