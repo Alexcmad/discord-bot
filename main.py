@@ -523,13 +523,7 @@ async def on_voice_state_update(member, before, after):
                 await asyncio.sleep(7)
             await vc.disconnect()
     if member.id == doss:
-        if after.channel and not before.channel:
-            await asyncio.sleep(1)
-            vc = await after.channel.connect(timeout=2)
-            file = discord.FFmpegPCMAudio(f'beighbeigh.m4a')
-            vc.play(file)
-            await asyncio.sleep(2.5)
-            await vc.disconnect()
+        await general.send("Beighbeigh")
 
 
 client.run(bot.TOKEN)
