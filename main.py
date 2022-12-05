@@ -312,6 +312,7 @@ async def play(ctx, playlist_link: discord.Option(str, required=True, descriptio
             await ctx.respond("connect with /join")
         else:
             vc = ctx.voice_client
+            vc.cleanup()
 
             playlist = spotify.get_playlist_items(playlist_link)
             playlist_name = spotify.get_playlist_name(playlist_link)
@@ -352,6 +353,7 @@ async def play(ctx, playlist_link: discord.Option(str, required=True, descriptio
 async def next(ctx):
     global playlist, moreCount
     moreCount = 0
+    ctx.voice_client.cleanup()
     if playlist:
         await ctx.respond("Next Round!")
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
@@ -405,6 +407,7 @@ async def more(ctx):
     if moreCount >= 3:
         await ctx.respond(f"OMG UR SO DUMB it was {game_answer[0]} 🐒🐵🐒🙊🙈🙉🐒")
         ctx.voice_client.stop()
+        ctx.voice_client.cleanup()
         current_audio = None
         moreCount = 0
 
@@ -432,8 +435,10 @@ async def more(ctx):
             else:
                 await ctx.respond(no_vc())
             moreCount += 1
+        elif ctx.voice_client.is_playing():
+            await ctx.respond("Wait until the current song stops playing")
         else:
-            await ctx.respond("No game running, either start a new one with /play or try /next-round")
+            await ctx.respond("No game running")
 
 
 @client.slash_command(name="join", guild_ids=[hearth],
@@ -525,6 +530,12 @@ async def on_voice_state_update(member, before, after):
     if member.id == doss:
         if after.channel and not before.channel:
             await general.send("Beighbeigh")
+
+@client.slash_command(name = "manga-lsit", guild_ids=[hearth],
+                      description = 'Manga List')
+def manga_list(ctx):
+    pass
+
 
 
 client.run(bot.TOKEN)
