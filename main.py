@@ -533,7 +533,7 @@ async def on_voice_state_update(member, before, after):
 
 @client.slash_command(name = "manga-lsit", guild_ids=[hearth],
                       description = 'Manga List')
-def manga_list(ctx):
+async def manga_list(ctx):
     pass
 
 
