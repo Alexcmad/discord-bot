@@ -353,7 +353,7 @@ async def play(ctx, playlist_link: discord.Option(str, required=True, descriptio
 async def next(ctx):
     global playlist, moreCount
     moreCount = 0
-    ctx.voice_client.cleanup()
+
     if playlist:
         await ctx.respond("Next Round!")
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
@@ -369,6 +369,7 @@ async def next(ctx):
                 await ctx.respond("connect with /join")
             else:
                 vc = ctx.voice_client
+                vc.cleanup()
 
                 async def play_rand():
                     global game_answer, current_audio
