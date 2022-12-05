@@ -312,7 +312,6 @@ async def play(ctx, playlist_link: discord.Option(str, required=True, descriptio
             await ctx.respond("connect with /join")
         else:
             vc = ctx.voice_client
-            vc.cleanup()
 
             playlist = spotify.get_playlist_items(playlist_link)
             playlist_name = spotify.get_playlist_name(playlist_link)
@@ -369,7 +368,6 @@ async def next(ctx):
                 await ctx.respond("connect with /join")
             else:
                 vc = ctx.voice_client
-                vc.cleanup()
 
                 async def play_rand():
                     global game_answer, current_audio
@@ -408,7 +406,6 @@ async def more(ctx):
     if moreCount >= 3:
         await ctx.respond(f"OMG UR SO DUMB it was {game_answer[0]} 🐒🐵🐒🙊🙈🙉🐒")
         ctx.voice_client.stop()
-        ctx.voice_client.cleanup()
         current_audio = None
         moreCount = 0
 
