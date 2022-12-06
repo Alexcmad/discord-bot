@@ -553,9 +553,9 @@ async def on_message_edit(before, after):
                       description = "Catch someone lackin'")
 async def snipe(ctx):
     if lastMessage:
-        ctx.respond (f"{lastMessage.content} -{lastMessage.author.mention}")
+        await ctx.respond (f"{lastMessage.content} -{lastMessage.author.mention}")
     else:
-        ctx.respond ("Nothing to Snipe")
+        await ctx.respond ("Nothing to Snipe")
 
 @client.slash_command(name = 'esnipe', guild_ids=[hearth],
                       description = "Catch someone lackin'")
