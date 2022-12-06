@@ -34,6 +34,9 @@ User = Query()
 guilds = db.table('server_data')
 Server = Query()
 
+mangas = db.table('manga_data')
+Manga = Query()
+
 pushupCount = 10
 
 
@@ -574,3 +577,7 @@ def player_update(game, pID):
 
 def guessed(user):
     users.update(dbop.increment('guessed_songs'), User.ID == get_ID(user))
+
+
+def update_manga_list():
+    pass

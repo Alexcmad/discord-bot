@@ -15,7 +15,7 @@ intents = discord.Intents.all()
 intents.voice_states = True
 intents.guilds = True
 client = commands.Bot(intents=intents)
-
+lastMessage = None
 current_audio = None
 moreCount = 0
 game_answer = None
@@ -530,11 +530,39 @@ async def on_voice_state_update(member, before, after):
         if after.channel and not before.channel:
             await general.send("Beighbeigh")
 
-@client.slash_command(name = "manga-lsit", guild_ids=[hearth],
-                      description = 'Manga List')
+
+@client.slash_command(name="manga-lsit", guild_ids=[hearth],
+                      description='Manga List')
 async def manga_list(ctx):
     pass
 
 
+@client.event
+async def on_message_delete(message):
+    global lastMessage
+    lastMessage = message
+
+
+@client.event
+async def on_message_edit(before, after):
+    global lastMessage
+    lastMessage = before
+
+
+@client.slash_command(name = 'snipe', guild_ids=[hearth],
+                      description = "Catch someone lackin'")
+async def snipe(ctx):
+    if lastMessage:
+        ctx.respond (f"{lastMessage.content} -{lastMessage.author.mention}")
+    else:
+        ctx.respond ("Nothing to Snipe")
+
+@client.slash_command(name = 'esnipe', guild_ids=[hearth],
+                      description = "Catch someone lackin'")
+async def snipe(ctx):
+    if lastMessage:
+        ctx.respond (f"{lastMessage.content} -{lastMessage.author.mention}")
+    else:
+        ctx.respond ("Nothing to Snipe")
 
 client.run(bot.TOKEN)
