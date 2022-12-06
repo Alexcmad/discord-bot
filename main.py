@@ -561,8 +561,8 @@ async def snipe(ctx):
                       description = "Catch someone lackin'")
 async def snipe(ctx):
     if lastMessage:
-        ctx.respond (f"{lastMessage.content} -{lastMessage.author.mention}")
+        await ctx.respond (f"{lastMessage.content} -{lastMessage.author.mention}")
     else:
-        ctx.respond ("Nothing to Snipe")
+        await ctx.respond ("Nothing to Snipe")
 
 client.run(bot.TOKEN)
