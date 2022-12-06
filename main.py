@@ -553,23 +553,32 @@ async def on_message_edit(before, after):
     edited = True
 
 
-@client.slash_command(name = 'snipe', guild_ids=[hearth],
-                      description = "Catch someone lackin'")
+@client.slash_command(name='snipe', guild_ids=[hearth],
+                      description="Catch someone lackin'")
 async def snipe(ctx):
     if lastMessage and not edited:
-        await ctx.respond (f"{imgUrl}/username/text/{lastMessage.author.name}/message/text/{lastMessage.content}/profile_pic/image_url/{lastMessage.author.avatar}")
+        user = lastMessage.author
+        name = "+".join(user.name.split())
+        raw_message = lastMessage.content.split()
+        message = "+".join(raw_message)
+        await ctx.respond(
+            f"{imgUrl}/username/text/{name}/message/text/{message}/profile_pic/image_url/{lastMessage.author.avatar}")
     else:
-        await ctx.respond ("Nothing to Snipe")
+        await ctx.respond("Nothing to Snipe")
 
 
-
-@client.slash_command(name = 'esnipe', guild_ids=[hearth],
-                      description = "Catch someone lackin'")
+@client.slash_command(name='esnipe', guild_ids=[hearth],
+                      description="Catch someone lackin'")
 async def snipe(ctx):
     if lastMessage and edited:
-        await ctx.respond (f"{imgUrl}/username/text/{lastMessage.author.name}/message/text/{lastMessage.content}/profile_pic/image_url/{lastMessage.author.avatar}")
+        user = lastMessage.author
+        name = "+".join(user.name.split())
+        raw_message = lastMessage.content.split()
+        message = "+".join(raw_message)
+        await ctx.respond(
+            f"{imgUrl}/username/text/{name}/message/text/{message}/profile_pic/image_url/{lastMessage.author.avatar}")
     else:
-        await ctx.respond ("Nothing to Snipe")
+        await ctx.respond("Nothing to Snipe")
 
 
 client.run(bot.TOKEN)
