@@ -16,6 +16,7 @@ intents.voice_states = True
 intents.guilds = True
 client = commands.Bot(intents=intents)
 lastMessage = None
+edited = False
 current_audio = None
 moreCount = 0
 game_answer = None
@@ -28,6 +29,7 @@ alex = 298206761587048448
 tiff = 266656358512852992
 doss = 316004737692598272
 prefix = 'i am incredibly homosexual'
+imgUrl = "https://ondemand.bannerbear.com/simpleurl/3vaNyD8JRLy8Ag0Q9L/image"
 hearth_p = 832504799533596673
 pg = False
 sorts = ["l_wins",
@@ -539,30 +541,35 @@ async def manga_list(ctx):
 
 @client.event
 async def on_message_delete(message):
-    global lastMessage
+    global lastMessage, edited
     lastMessage = message
+    edited = False
 
 
 @client.event
 async def on_message_edit(before, after):
-    global lastMessage
+    global lastMessage, edited
     lastMessage = before
+    edited = True
 
 
 @client.slash_command(name = 'snipe', guild_ids=[hearth],
                       description = "Catch someone lackin'")
 async def snipe(ctx):
-    if lastMessage:
-        await ctx.respond (f"{lastMessage.content} -{lastMessage.author.mention}")
+    if lastMessage and not edited:
+        await ctx.respond (f"{imgUrl}/username/text/{lastMessage.author.name}/message/text/{lastMessage.content}/profile_pic/image_url/{lastMessage.author.avatar}")
     else:
         await ctx.respond ("Nothing to Snipe")
+
+
 
 @client.slash_command(name = 'esnipe', guild_ids=[hearth],
                       description = "Catch someone lackin'")
 async def snipe(ctx):
-    if lastMessage:
-        await ctx.respond (f"{lastMessage.content} -{lastMessage.author.mention}")
+    if lastMessage and edited:
+        await ctx.respond (f"{imgUrl}/username/text/{lastMessage.author.name}/message/text/{lastMessage.content}/profile_pic/image_url/{lastMessage.author.avatar}")
     else:
         await ctx.respond ("Nothing to Snipe")
+
 
 client.run(bot.TOKEN)
