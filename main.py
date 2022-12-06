@@ -546,12 +546,13 @@ async def on_message_delete(message):
     edited = False
 
 
+"""
 @client.event
 async def on_message_edit(before, after):
     global lastMessage, edited
     lastMessage = before
     edited = True
-
+"""
 
 @client.slash_command(name='snipe', guild_ids=[hearth],
                       description="Catch someone lackin'")
@@ -566,7 +567,7 @@ async def snipe(ctx):
     else:
         await ctx.respond("Nothing to Snipe")
 
-
+"""
 @client.slash_command(name='esnipe', guild_ids=[hearth],
                       description="Catch someone lackin'")
 async def snipe(ctx):
@@ -579,6 +580,6 @@ async def snipe(ctx):
             f"{imgUrl}/username/text/{name}/message/text/{message}/profile_pic/image_url/{lastMessage.author.avatar}")
     else:
         await ctx.respond("Nothing to Snipe")
-
+"""
 
 client.run(bot.TOKEN)
