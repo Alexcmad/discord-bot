@@ -24,11 +24,12 @@ secs = 3
 playlist = None
 hearth = 695056946616860729
 hearthGeneral = 742448286702633092
+hearthManga = 1023978024359702591
 bird = 229401751281729536
 alex = 298206761587048448
 tiff = 266656358512852992
 doss = 316004737692598272
-prefix = 'i am incredibly homosexual'
+prefix = '.'
 imgUrl = "https://ondemand.bannerbear.com/simpleurl/3vaNyD8JRLy8Ag0Q9L/image"
 hearth_p = 832504799533596673
 pg = False
@@ -146,6 +147,13 @@ async def on_message(message):
                     if m:
                         for y in m:
                             bot.quote(x.content, y)
+                print("Done")
+
+        if msg.startswith((f'{prefix}manga')):
+            print("Loading Manga...")
+            async for x in channel.history():
+                bot.load_manga(x.content, x.author.mention)
+            print("Done")
 
         elif msg.startswith(f'{prefix}creload'):
             if is_cChat:
@@ -533,10 +541,22 @@ async def on_voice_state_update(member, before, after):
             await general.send("Beighbeigh")
 
 
-@client.slash_command(name="manga-lsit", guild_ids=[hearth],
+@client.slash_command(name="manga-list", guild_ids=[hearth],
                       description='Manga List')
 async def manga_list(ctx):
-    pass
+    await ctx.respond(embed =bot.list_manga())
+
+
+@client.slash_command(name="add-manga", guild_ids=[hearth],
+                      description='Add manga to the list')
+async def add_manga(ctx, title: discord.Option(str, name = 'title', required = True)):
+    await ctx.respond(bot.add_manga(title, ctx.author.mention))
+
+
+@client.slash_command(name="manga", guild_ids=[hearth],
+                      description='random manga')
+async def manga_list(ctx):
+    await ctx.respond(embed =bot.random_manga())
 
 
 @client.event

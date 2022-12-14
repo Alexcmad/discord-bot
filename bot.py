@@ -74,6 +74,8 @@ def add_user(user):
             }
 
 
+
+
 def is_server(server):
     if guilds.search(Server.ID == get_ID(server)):
         return
@@ -579,5 +581,44 @@ def guessed(user):
     users.update(dbop.increment('guessed_songs'), User.ID == get_ID(user))
 
 
-def update_manga_list():
-    pass
+def add_manga(manga, added_by):
+    mangas.insert({"title":manga, "added":added_by})
+    return f"`{str.title(manga)}` Added"
+
+
+def load_manga(manga, added_by):
+    if manga == '.manga':
+        print("This is the command")
+    elif '\n' in manga:
+        manga = manga.split('\n')
+        for m in manga:
+            print(f"Title: {m} Added by: {added_by}")
+            add_manga(m, added_by)
+    else:
+        print(f"Title: {manga} Added by: {added_by}")
+        add_manga(manga,added_by)
+
+
+def get_manga_list():
+    manga_list = [(manga.get("title"), manga.get('added')) for manga in mangas]
+    return manga_list
+
+
+def list_manga():
+    lst = discord.Embed(title="Manga List", colour=choice(colors))
+    for item in get_manga_list():
+        title = str.title(item[0])
+        added_by = item[1]
+        lst.add_field(value=f"`{title}` Added by: {added_by}", name=u'\u200b', inline=False)
+
+    return lst
+
+
+def random_manga():
+    out = discord.Embed(title="Random Manga", colour=choice(colors))
+    pick = choice(get_manga_list())
+    title = str.title(pick[0])
+    added_by = pick[1]
+    out.add_field(value=f"Added by: {added_by}", name=f"`{title}`", inline=False)
+    return out
+
