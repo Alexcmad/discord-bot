@@ -6,6 +6,7 @@ import random
 import discord
 from discord.ext import commands
 import bot
+import minecraf
 import spotify
 import nacl
 import youtube_dl
@@ -69,6 +70,13 @@ help.add_field(name="Play another Round", value='/next-round', inline=False)
 help.add_field(name="View League Leaderboard", value='/lol-top', inline=False)
 help.add_field(name="Get a Random Quote", value='/random-quote', inline=False)
 help.add_field(name="Guess who said the Quote", value='/answer', inline=False)
+help.add_field(name="Check Minecraft Server Info", value='/server', inline=False)
+help.add_field(name="Start Minecraft Server", value='/start-server', inline=False)
+help.add_field(name="Restart Minecraft Server", value='/restart-server', inline=False)
+help.add_field(name="Catch Someone Lackin'", value='/snipe', inline=False)
+help.add_field(name="View Manga List", value='/manga-list', inline=False)
+help.add_field(name="Add Manga To List", value='/add-manga [manga name]', inline=False)
+help.add_field(name="Get Random Manga", value='/manga', inline=False)
 help.add_field(name="Get Bot Commands", value='/help', inline=False)
 
 
@@ -544,19 +552,19 @@ async def on_voice_state_update(member, before, after):
 @client.slash_command(name="manga-list", guild_ids=[hearth],
                       description='Manga List')
 async def manga_list(ctx):
-    await ctx.respond(embed =bot.list_manga())
+    await ctx.respond(embed=bot.list_manga())
 
 
 @client.slash_command(name="add-manga", guild_ids=[hearth],
                       description='Add manga to the list')
-async def add_manga(ctx, title: discord.Option(str, name = 'title', required = True)):
+async def add_manga(ctx, title: discord.Option(str, name='title', required=True)):
     await ctx.respond(bot.add_manga(title, ctx.author.mention))
 
 
 @client.slash_command(name="manga", guild_ids=[hearth],
                       description='random manga')
 async def manga_list(ctx):
-    await ctx.respond(embed =bot.random_manga())
+    await ctx.respond(embed=bot.random_manga())
 
 
 @client.event
@@ -574,6 +582,7 @@ async def on_message_edit(before, after):
     edited = True
 """
 
+
 @client.slash_command(name='snipe', guild_ids=[hearth],
                       description="Catch someone lackin'")
 async def snipe(ctx):
@@ -586,6 +595,7 @@ async def snipe(ctx):
             f"{imgUrl}/username/text/{name}/message/text/{message}/profile_pic/image_url/{lastMessage.author.avatar}")
     else:
         await ctx.respond("Nothing to Snipe")
+
 
 """
 @client.slash_command(name='esnipe', guild_ids=[hearth],
@@ -601,5 +611,24 @@ async def snipe(ctx):
     else:
         await ctx.respond("Nothing to Snipe")
 """
+
+
+@client.slash_command(name='server', guild_ids=[hearth],
+                      description="View MC Server Info")
+async def server(ctx):
+    await ctx.respond(embed=minecraf.info())
+
+
+@client.slash_command(name='start-server', guild_ids=[hearth],
+                      description = "Start the MC Server")
+async def start_server(ctx):
+    await ctx.respond(minecraf.start())
+
+
+@client.slash_command(name='restart-server', guild_ids=[hearth],
+                      description = "Restart the MC Server")
+async def start_server(ctx):
+    await ctx.respond(minecraf.restart())
+
 
 client.run(bot.TOKEN)
