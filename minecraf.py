@@ -9,7 +9,10 @@ colors = [0xFFE4E1, 0x00FF7F, 0xD8BFD8, 0xDC143C, 0xFF4500, 0xDEB887, 0xADFF2F, 
 username = 'otherAlexcmad'
 passcode = 'qu@6A86UWA@ck4S'
 
-at = Client.from_credentials(username=username, password=passcode)
+try:
+    at = Client.from_credentials(username=username, password=passcode)
+except:
+    at = Client.restore_session()
 
 server = at.list_servers()[0]
 
@@ -71,3 +74,5 @@ def info():
     embed.add_field(name='Player List', value=player_list())
 
     return embed
+
+at.save_session()
