@@ -613,6 +613,7 @@ async def snipe(ctx):
 """
 
 
+"""
 @client.slash_command(name='server', guild_ids=[hearth],
                       description="View MC Server Info")
 async def server(ctx):
@@ -629,6 +630,6 @@ async def start_server(ctx):
                       description = "Restart the MC Server")
 async def start_server(ctx):
     await ctx.respond(minecraf.restart())
-
+"""
 
 client.run(bot.TOKEN)
