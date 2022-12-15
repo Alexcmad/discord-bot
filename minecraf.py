@@ -12,7 +12,7 @@ passcode = 'qu@6A86UWA@ck4S'
 try:
     at = Client.from_credentials(username=username, password=passcode)
 except:
-    at = Client.restore_session()
+    at = Client.restore_session(file="cache.aternos")
 
 server = at.list_servers()[0]
 
