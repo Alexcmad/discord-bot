@@ -621,4 +621,3 @@ def random_manga():
     added_by = pick[1]
     out.add_field(value=f"Added by: {added_by}", name=f"`{title}`", inline=False)
     return out
-
