@@ -12,6 +12,7 @@ import spotify
 import nacl
 import youtube_dl
 import ffmpeg
+import MiniCom
 
 intents = discord.Intents.all()
 intents.voice_states = True
@@ -598,39 +599,21 @@ async def snipe(ctx):
         await ctx.respond("Nothing to Snipe")
 
 
-"""
-@client.slash_command(name='esnipe', guild_ids=[hearth],
-                      description="Catch someone lackin'")
-async def snipe(ctx):
-    if lastMessage and edited:
-        user = lastMessage.author
-        name = "+".join(user.name.split())
-        raw_message = lastMessage.content.split()
-        message = "+".join(raw_message)
-        await ctx.respond(
-            f"{imgUrl}/username/text/{name}/message/text/{message}/profile_pic/image_url/{lastMessage.author.avatar}")
-    else:
-        await ctx.respond("Nothing to Snipe")
-"""
+@client.slash_command(name='spawn', guild_ids=[hearth],
+                      description="Start a run of life simulator")
+async def spawn(ctx):
+    await ctx.respond(MiniCom.random_character(ctx.user.id))
 
 
-"""
-@client.slash_command(name='server', guild_ids=[hearth],
-                      description="View MC Server Info")
-async def server(ctx):
-    await ctx.respond(embed=minecraf.info())
+@client.slash_command(name='character', guild_ids=[hearth],
+                      description="View your character")
+async def spawn(ctx):
+    await ctx.respond(MiniCom.view_stats(ctx.user.id))
 
 
-@client.slash_command(name='start-server', guild_ids=[hearth],
-                      description = "Start the MC Server")
-async def start_server(ctx):
-    await ctx.respond(minecraf.start())
+@discord.ext.tasks.loop(minutes=1, reconnect=True)
+async def year_up():
+    pass
 
-
-@client.slash_command(name='restart-server', guild_ids=[hearth],
-                      description = "Restart the MC Server")
-async def start_server(ctx):
-    await ctx.respond(minecraf.restart())
-"""
 
 client.run(bot.TOKEN)
