@@ -1,1 +1,1 @@
-{"player_data": {"1": {"vehicles": [], "name": "Regina", "age": 0, "balance": 0, "houses": [], "occupation": null, "owns": [], "parents": ["Harry", "Carrie"], "children": [], "nationality": "JA", "income": 0, "expenses": 0, "sex": "F", "ID": 298206761587048448}}}
+{"_default": {"1": {"id": 298206761587048448, "name": "Bird", "age": 26, "gender": "Dumbass", "money": 0, "health": 100}}}

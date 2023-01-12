@@ -49,6 +49,7 @@ sorts = ["l_wins",
          "count",
          "counted"
          ]
+genders = ("Male", "Female", "Attack Helicopter", "Dog", "Saggitarus", "Nigga", "Bitch", "Hoe", "Dumbass", "Racist")
 
 birds = ["🦃", "🐔", "🐓", "🐣", "🐤", "🐥", "🐦", "🦆", "🐧"]
 idx = 1
@@ -89,6 +90,7 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     guilds = client.guilds
     lol_reload.start()
+    year.start()
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Hentai"))
 
     for x in guilds:
@@ -599,19 +601,26 @@ async def snipe(ctx):
 
 @client.slash_command(name='spawn', guild_ids=[hearth],
                       description="Start a run of life simulator")
-async def spawn(ctx):
-    await ctx.respond(MiniCom.random_character(ctx.user.id))
+async def spawn(ctx, name: discord.Option(str, required=True, name="name"), gender: discord.Option(str, required=False,
+                                                                                                   name='gender')):
+    if not gender:
+        gender = choice(genders)
+    await ctx.respond(MiniCom.new_player(ctx.user.id, name=name, gender=gender))
 
 
 @client.slash_command(name='character', guild_ids=[hearth],
                       description="View your character")
-async def spawn(ctx):
-    await ctx.respond(MiniCom.view_stats(ctx.user.id))
+async def char(ctx):
+    try:
+        await ctx.respond(embed=MiniCom.view_player(ctx.user.id))
+    except:
+        await ctx.respond(MiniCom.view_player(ctx.user.id))
 
 
 @discord.ext.tasks.loop(minutes=1, reconnect=True)
-async def year_up():
-    pass
+async def year():
+    MiniCom.players.year()
+    print("A Year Has Passed")
 
 
 client.run(bot.TOKEN)

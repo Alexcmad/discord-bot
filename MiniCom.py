@@ -1,18 +1,23 @@
 from random import choice
+
+import discord
 from tinydb import TinyDB, Query
 import json
 import tinydb.operations as dbop
 
-db = TinyDB('minicom.json')
-characters = db.table('player_data')
-player = Query()
+import bot
+
+colors = bot.colors
+from discord import Embed
 
 adult = 18
 
 
-class Person:
-    def __init__(self, name, parents, nationality, sex):
-        self.vehicles = []
+class Players:
+    def __init__(self, db_file):
+        self.db = TinyDB(db_file)
+        self.Player = Query()
+        """ self.vehicles = []
         self.name = name
         self.age = 0
         self.balance = 0
@@ -24,113 +29,55 @@ class Person:
         self.nationality = nationality
         self.income = 0
         self.expenses = 0
-        self.sex = sex
+        self.sex = sex"""
 
-    def grow(self):
-        self.age += 1
-        self.balance += self.income
-        self.balance -= self.expenses
-        if self.age == 18:
-            return ("You're a grown up now! You have to find your own food! +$200 expenses")
+    def add_player(self, data):
+        self.db.insert(data)
 
-    def buy(self, product):
-        if self.balance >= product.price:
-            self.balance -= product.price
-            if type(product) == Building:
-                self.houses.append(product)
-            elif type(product) == Vehicle:
-                self.vehicles.append(product)
-            self.owns.append(product)
-        else:
-            return "Not Enough Money"
+    def update_player(self, ID, new_data):
+        self.db.update(new_data, self.Player.id == ID)
 
-    def get_job(self, job):
-        if self.age < adult:
-            return "Too Young to work!"
-        else:
-            self.income += 10000
-            return "You're Hired! +$10,000 income"
+    def remove_Player(self, ID):
+        self.db.remove(self.Player.id == ID)
 
-    def toJSON(self):
-        return json.loads(json.dumps(self, default=lambda o: o.__dict__))
+    def get_player(self, ID):
+        try:
+            return self.db.search(self.Player.id == ID)[0]
+        except:
+            return 0
+
+    def year(self):
+        self.db.update(dbop.increment('age'))
 
 
-    def __str__(self):
-        return f"{self.name}({self.age})({self.sex})\nOccupation: {self.occupation}\nBal: ${self.balance}\nHouses: {self.houses}"
+players = Players(db_file='minicom.json')
 
 
-class Item:
-    def __init__(self, price, typ):
-        self.price = price
-        self.typ = typ
-
-    def __str__(self):
-        return f"{self.typ}\n${self.price}\n${self.price}"
-
-
-class Asset(Item):
-    def __init__(self, price, expense, typ):
-        super().__init__(price, typ)
-        self.expense = expense
-
-
-class Building(Asset):
-    def __init__(self, price, city, expense, country, description, typ):
-        super().__init__(price=price, expense=expense, typ=typ)
-        self.city = city
-        self.country = country
-        self.description = description
-
-    def __str__(self):
-        return f"{self.description}\n${self.price}\nLocation: {self.city},{self.country}"
-
-
-class Vehicle(Asset):
-    def __init__(self, price, brand, color, model, expense, typ):
-        super().__init__(price, expense, typ)
-        self.brand = brand
-        self.color = color
-        self.model = model
-
-
-class Player(Person):
-    def __init__(self, name, parents, nationality, sex,ID):
-        super().__init__(name, parents, nationality, sex)
-        self.ID = ID
-
-
-def random_character(ID):
-    names = ["Bob", "Alex", "Regina", "Mike"]
-    name = choice(names)
-
-    countries = ["JA", "USA", "SPN", 'UK', "GER"]
-    nationality = choice(countries)
-
-    parentals = [("Harry", "Carrie"), ("James", "Jane")]
-    parents = choice(parentals)
-
-    sexes = ("M", "F")
-    sex = choice(sexes)
-
-    character = Player(name=name, parents=parents, sex=sex, nationality=nationality, ID=ID)
-    characters.insert(character.toJSON())
-    return start(character)
-
-
-def start(character):
-    name = character.name
-    nationality = character.nationality
-    mother = character.parents[1]
-    father = character.parents[0]
-    return f"You are born as {name} in {nationality} and your parents are {mother} and {father}.\nCurrent age: 0"
-
-
-def view_stats(ID):
-    char = characters.search(player.ID == ID)
-    if char:
-        return(char[0])
+def new_player(ID, name, gender):
+    if players.get_player(ID):
+        return '```You Already Have a Character```'
     else:
-        return "Not In Database"
+        data = {'id': ID, 'name': name, 'age': 0, 'gender': gender, 'money': 0, 'health': 100}
+        players.add_player(data)
+        return f"```Player {name} added Successfully```"
 
 
+def view_player(ID):
+    data = players.get_player(ID)
+    print(data)
+    if data:
+        embed = discord.Embed(title=f"Character Info", colour=choice(colors))
+        embed.add_field(name='Name', value=data['name'])
+        embed.add_field(name='Age', value=data['age'])
+        embed.add_field(name=u'\u200b', value=u'\u200b')
+        embed.add_field(name='Sex', value=data['gender'])
+        embed.add_field(name='Money', value=data['money'])
+        embed.add_field(name=u'\u200b', value=u'\u200b')
+        embed.add_field(name='Health', value=data['health'])
 
+        return embed
+    else:
+        return "```You don't have a Character made```"
+
+
+view_player(92)
