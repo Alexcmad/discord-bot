@@ -6,6 +6,7 @@ import random
 import discord
 from discord.ext import commands
 import bot
+import tft
 # import minecraf
 import spotify
 import nacl
