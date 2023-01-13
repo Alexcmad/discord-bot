@@ -44,12 +44,17 @@ class Players:
         except:
             return "```You don't have a Character made```"
 
-
     def get_player(self, ID):
         try:
             return self.db.search(self.Player.id == ID)[0]
         except:
             return 0
+
+    def adulthood(self, ID):
+        char = self.get_player(ID)
+        self.update_player(ID,{'adult': True})
+        self.update_player(ID,{'expenses': 100})
+        return f"{char['name']} is now an adult! They will have to start paying for food. +$100 in expenses"
 
     def year(self):
         notice = []
@@ -57,12 +62,15 @@ class Players:
         for char in self.db.all():
             if char['age'] >= 100 and char['health'] > 0:
                 notice.append(self.kill(char['id']))
+            if char['age'] >= adult and not char.setdefault('adult', False):
+                notice.append(self.adulthood(char['id']))
+            self.update_player(char['id'],{'money': char.get('money') - char.setdefault('expenses',0)})
         return notice
 
     def kill(self, ID):
         self.update_player(ID, {'health': 0})
         char = self.get_player(ID)['name']
-        return f"```{char} Has Died```"
+        return f"{char} Has Died"
 
     """def deteriorate(self):
         self.db.update({'health':})"""
@@ -73,11 +81,11 @@ players = Players(db_file='minicom.json')
 
 def new_player(ID, name, gender):
     if players.get_player(ID):
-        return '```You Already Have a Character```'
+        return 'You Already Have a Character'
     else:
         data = {'id': ID, 'name': name, 'age': 0, 'gender': gender, 'money': 0, 'health': 100}
         players.add_player(data)
-        return f"```Character {name} added Successfully```"
+        return f"Character {name} added Successfully"
 
 
 def view_player(ID):
@@ -93,10 +101,12 @@ def view_player(ID):
         embed.add_field(name='Age', value=data['age'])
         embed.add_field(name=u'\u200b', value=u'\u200b')
         embed.add_field(name='Sex', value=data['gender'])
-        embed.add_field(name='Money', value=data['money'])
-        embed.add_field(name=u'\u200b', value=u'\u200b')
         embed.add_field(name='Health', value=health)
+        embed.add_field(name=u'\u200b', value=u'\u200b')
+        embed.add_field(name='Money', value=f"${data['money']}")
+        embed.add_field(name='Expenses', value=f"${data.setdefault('expenses',0)}")
+
 
         return embed
     else:
-        return "```You don't have a Character made```"
+        return "You don't have a Character made"

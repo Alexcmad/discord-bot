@@ -606,7 +606,7 @@ async def spawn(ctx, name: discord.Option(str, required=True, name="name"), gend
                                                                                                    name='gender')):
     if not gender:
         gender = choice(genders)
-    await ctx.respond(MiniCom.new_player(ctx.user.id, name=name, gender=gender))
+    await ctx.respond(f"```{MiniCom.new_player(ctx.user.id, name=name, gender=gender)}```")
 
 
 @client.slash_command(name='character', guild_ids=[hearth],
@@ -615,23 +615,22 @@ async def char(ctx):
     try:
         await ctx.respond(embed=MiniCom.view_player(ctx.user.id))
     except:
-        await ctx.respond(MiniCom.view_player(ctx.user.id))
+        await ctx.respond(f"```{MiniCom.view_player(ctx.user.id)}```")
 
 
 @discord.ext.tasks.loop(minutes=1, reconnect=True)
 async def year():
     slave = client.get_channel(heathSlave)
-    print("A Year Has Passed")
     notice = MiniCom.players.year()
     if notice:
         for msg in notice:
-            await slave.send(msg)
+            await slave.send(f"```{msg}```")
 
 
 @client.slash_command(name='delete', guild_ids=[hearth],
                       description="Delete your character")
 async def delete(ctx):
-    await ctx.respond(MiniCom.players.remove_Player(ctx.user.id))
+    await ctx.respond(f"```{MiniCom.players.remove_Player(ctx.user.id)}```")
 
 
 client.run(bot.TOKEN)
