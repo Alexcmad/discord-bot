@@ -82,8 +82,9 @@ def new_player(ID, name, gender):
 
 def view_player(ID):
     data = players.get_player(ID)
-    health = data['health']
     if data:
+
+        health = data['health']
         if health == 0:
             health = 'Dead'
 
