@@ -26,6 +26,7 @@ playlist = None
 hearth = 695056946616860729
 hearthGeneral = 742448286702633092
 hearthManga = 1023978024359702591
+heathSlave = 696269686605611050
 bird = 229401751281729536
 alex = 298206761587048448
 tiff = 266656358512852992
@@ -619,8 +620,18 @@ async def char(ctx):
 
 @discord.ext.tasks.loop(minutes=1, reconnect=True)
 async def year():
-    MiniCom.players.year()
+    slave = client.get_channel(heathSlave)
     print("A Year Has Passed")
+    notice = MiniCom.players.year()
+    if notice:
+        for msg in notice:
+            await slave.send(msg)
+
+
+@client.slash_command(name='delete', guild_ids=[hearth],
+                      description="Delete your character")
+async def delete(ctx):
+    await ctx.respond(MiniCom.players.remove_Player(ctx.user.id))
 
 
 client.run(bot.TOKEN)

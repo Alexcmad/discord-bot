@@ -38,7 +38,12 @@ class Players:
         self.db.update(new_data, self.Player.id == ID)
 
     def remove_Player(self, ID):
-        self.db.remove(self.Player.id == ID)
+        try:
+            self.db.remove(self.Player.id == ID)
+            return "```Character Deleted Successfully```"
+        except:
+            return "```You don't have a Character made```"
+
 
     def get_player(self, ID):
         try:
@@ -47,11 +52,20 @@ class Players:
             return 0
 
     def year(self):
-        self.db.update(dbop.increment('age'))
+        notice = []
+        self.db.update(dbop.increment('age'), self.Player.health > 0)
+        for char in self.db.all():
+            if char['age'] >= 100 and char['health'] > 0:
+                notice.append(self.kill(char['id']))
+        return notice
 
+    def kill(self, ID):
+        self.update_player(ID, {'health': 0})
+        char = self.get_player(ID)['name']
+        return f"```{char} Has Died```"
 
-    def deteriorate(self):
-        self.db.update({'health':})
+    """def deteriorate(self):
+        self.db.update({'health':})"""
 
 
 players = Players(db_file='minicom.json')
@@ -63,11 +77,14 @@ def new_player(ID, name, gender):
     else:
         data = {'id': ID, 'name': name, 'age': 0, 'gender': gender, 'money': 0, 'health': 100}
         players.add_player(data)
-        return f"```Player {name} added Successfully```"
+        return f"```Character {name} added Successfully```"
 
 
 def view_player(ID):
     data = players.get_player(ID)
+    health = data['health']
+    if health == 0:
+        health = 'Dead'
     print(data)
     if data:
         embed = discord.Embed(title=f"Character Info", colour=choice(colors))
@@ -77,7 +94,7 @@ def view_player(ID):
         embed.add_field(name='Sex', value=data['gender'])
         embed.add_field(name='Money', value=data['money'])
         embed.add_field(name=u'\u200b', value=u'\u200b')
-        embed.add_field(name='Health', value=data['health'])
+        embed.add_field(name='Health', value=health)
 
         return embed
     else:
