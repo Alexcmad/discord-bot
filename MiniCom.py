@@ -40,9 +40,9 @@ class Players:
     def remove_Player(self, ID):
         try:
             self.db.remove(self.Player.id == ID)
-            return "```Character Deleted Successfully```"
+            return "Character Deleted Successfully"
         except:
-            return "```You don't have a Character made```"
+            return "You don't have a Character made"
 
     def get_player(self, ID):
         try:
