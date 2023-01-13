@@ -17,6 +17,8 @@ class Players:
     def __init__(self, db_file):
         self.db = TinyDB(db_file)
         self.Player = Query()
+        self.health_decay = 0  # Will be subtracted from the player's health
+        self.exponent = 1.05  # The exponent the Players' health deteriorates by with age
         """ self.vehicles = []
         self.name = name
         self.age = 0
@@ -52,25 +54,36 @@ class Players:
 
     def adulthood(self, ID):
         char = self.get_player(ID)
-        self.update_player(ID,{'adult': True})
-        self.update_player(ID,{'expenses': 100})
+        self.update_player(ID, {'adult': True})
+        self.update_player(ID, {'expenses': 100})
         return f"{char['name']} is now an adult! They will have to start paying for food. +$100 in expenses"
 
     def year(self):
         notice = []
         self.db.update(dbop.increment('age'), self.Player.health > 0)
         for char in self.db.all():
-            if char['age'] >= 100 and char['health'] > 0:
-                notice.append(self.kill(char['id']))
+            char_exp = self.exponent ** char['age']  # Calculate the exponential value (age decay)
+            decay = (char_exp + self.health_decay - 1.05)  # Calculate the total amount to subtract from health
+            char['health'] = round(100 - decay, 1)  # Subtract decay from health and round to one decimal place
+
+            expenses = char.setdefault('expenses', 0)
+            income = char.setdefault('income', 0)
+            char['money'] = char['money'] - expenses + income
+            self.update_player(char['id'], char)
+
+            if char['health'] <= 0 and char.setdefault('alive', True):
+                notice.append(self.kill(char['id'], ['Old Age']))
+
             if char['age'] >= adult and not char.setdefault('adult', False):
                 notice.append(self.adulthood(char['id']))
-            self.update_player(char['id'],{'money': char.get('money') - char.setdefault('expenses',0)})
+
         return notice
 
-    def kill(self, ID):
-        self.update_player(ID, {'health': 0})
+    def kill(self, ID, method):
+        means = method[0]
+        self.update_player(ID, {'health': 0, 'alive': False})
         char = self.get_player(ID)['name']
-        return f"{char} Has Died"
+        return f"{char} Has Died from {means}"
 
     """def deteriorate(self):
         self.db.update({'health':})"""
@@ -93,7 +106,7 @@ def view_player(ID):
     if data:
 
         health = data['health']
-        if health == 0:
+        if health <= 0:
             health = 'Dead'
 
         embed = discord.Embed(title=f"Character Info", colour=choice(colors))
@@ -104,9 +117,8 @@ def view_player(ID):
         embed.add_field(name='Health', value=health)
         embed.add_field(name=u'\u200b', value=u'\u200b')
         embed.add_field(name='Money', value=f"${data['money']}")
-        embed.add_field(name='Expenses', value=f"${data.setdefault('expenses',0)}")
+        embed.add_field(name='Expenses', value=f"${data.setdefault('expenses', 0)}")
         embed.add_field(name=u'\u200b', value=u'\u200b')
-
 
         return embed
     else:
