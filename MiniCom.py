@@ -105,6 +105,7 @@ def view_player(ID):
         embed.add_field(name=u'\u200b', value=u'\u200b')
         embed.add_field(name='Money', value=f"${data['money']}")
         embed.add_field(name='Expenses', value=f"${data.setdefault('expenses',0)}")
+        embed.add_field(name=u'\u200b', value=u'\u200b')
 
 
         return embed

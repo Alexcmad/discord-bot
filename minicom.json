@@ -1,1 +1,1 @@
-{"_default": {"2": {"id": 229401751281729536, "name": "Alex", "age": 37, "gender": "Virgin", "money": 0, "health": 100}}}
+{"_default": {"2": {"id": 229401751281729536, "name": "Alex", "age": 46, "gender": "Virgin", "money": -500, "health": 100, "adult": true, "expenses": 100}, "3": {"id": 298206761587048448, "name": "Joe", "age": 20, "gender": "Female", "money": -200, "health": 100, "adult": true, "expenses": 100}}}
