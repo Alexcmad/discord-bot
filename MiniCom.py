@@ -50,6 +50,10 @@ class Players:
         self.db.update(dbop.increment('age'))
 
 
+    def deteriorate(self):
+        self.db.update({'health':})
+
+
 players = Players(db_file='minicom.json')
 
 
@@ -78,6 +82,3 @@ def view_player(ID):
         return embed
     else:
         return "```You don't have a Character made```"
-
-
-view_player(92)
