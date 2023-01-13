@@ -83,10 +83,10 @@ def new_player(ID, name, gender):
 def view_player(ID):
     data = players.get_player(ID)
     health = data['health']
-    if health == 0:
-        health = 'Dead'
-    print(data)
     if data:
+        if health == 0:
+            health = 'Dead'
+            
         embed = discord.Embed(title=f"Character Info", colour=choice(colors))
         embed.add_field(name='Name', value=data['name'])
         embed.add_field(name='Age', value=data['age'])
@@ -99,3 +99,5 @@ def view_player(ID):
         return embed
     else:
         return "```You don't have a Character made```"
+
+view_player()
