@@ -149,7 +149,7 @@ def view_player(ID):
     data = players.get_player(ID)
     if data:
 
-        health = data['health']
+        health = round(data['health'], 1)
         if health <= 0:
             health = 'Dead'
 
@@ -158,7 +158,7 @@ def view_player(ID):
         embed.add_field(name='Age', value=data['age'])
         embed.add_field(name=u'\u200b', value=u'\u200b')
         embed.add_field(name='Sex', value=data['gender'])
-        embed.add_field(name='Health', value=round(health, 1))
+        embed.add_field(name='Health', value=health)
         embed.add_field(name=u'\u200b', value=u'\u200b')
         embed.add_field(name='Money', value=f"${round(data['money'], 2)}")
         embed.add_field(name='Expenses', value=f"${data.get('expenses', 0)}")
