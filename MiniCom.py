@@ -81,7 +81,7 @@ class Players:
         for char in self.db.all():
             char_exp = self.exponent ** char['age']  # Calculate the exponential value (age decay)
             decay = (char_exp + self.health_decay - 1.05)  # Calculate the total amount to subtract from health
-            char['health'] = 100 - decay, 1  # Subtract decay from max health
+            char['health'] = 100 - decay  # Subtract decay from max health
 
             # add health benefit in the future
 
@@ -91,10 +91,10 @@ class Players:
                 char['money'] = char['money'] - expenses + income
             self.update_player(char['id'], char)
 
-            if char['health'] and char['alive']:
-                notice.append(self.kill(char['id'], ['Old Age']))
+            if char.get('health') <= 0 and char.get('alive'):
+                notice.append(self.kill(char['id'], 'Old Age'))
 
-            if char['age'] >= adult and not char.get('adult', False):
+            if char.get('age') >= adult and not char.get('adult', False):
                 notice.append(self.adulthood(char['id']))
 
         return notice
