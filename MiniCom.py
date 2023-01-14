@@ -92,7 +92,7 @@ class Players:
             self.update_player(char['id'], char)
 
             if char.get('health') <= 0 and char.get('alive'):
-                notice.append(self.kill(char['id'], 'Old Age'))
+                notice.append(self.kill(char['id'], ['Old Age']))
 
             if char.get('age') >= adult and not char.get('adult', False):
                 notice.append(self.adulthood(char['id']))
