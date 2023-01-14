@@ -635,8 +635,8 @@ async def delete(ctx):
 
 @client.slash_command(name='apply', guild_ids=[hearth],
                       description="Apply for a Job")
-async def apply(ctx, id: discord.Option(str, name='id', required=True, description="Job ID")):
-    ctx.respond(f"```{MiniCom.players.get_job(ctx.user.id,id)}```")
+async def apply(ctx, id: discord.Option(int, name='id', required=True, description="Job ID")):
+    await ctx.respond(f"```{MiniCom.players.get_job(ctx.user.id,id)}```")
 
 
 @client.slash_command(name='job-list', guild_ids=[hearth],

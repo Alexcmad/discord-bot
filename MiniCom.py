@@ -157,12 +157,16 @@ def view_player(ID):
         embed.add_field(name='Name', value=data['name'])
         embed.add_field(name='Age', value=data['age'])
         embed.add_field(name=u'\u200b', value=u'\u200b')
-        embed.add_field(name='Sex', value=data['gender'])
-        embed.add_field(name='Health', value=health)
+        embed.add_field(name='Sex♂️♀️', value=data['gender'])
+        embed.add_field(name='Health💖', value=health)
         embed.add_field(name=u'\u200b', value=u'\u200b')
-        embed.add_field(name='Money', value=f"${round(data['money'], 2)}")
-        embed.add_field(name='Expenses', value=f"${data.get('expenses', 0)}")
+        embed.add_field(name='Balance💵', value=f"${round(data['money'], 2)}")
+        embed.add_field(name='Expenses📉', value=f"${data.get('expenses', 0)}")
         embed.add_field(name=u'\u200b', value=u'\u200b')
+        embed.add_field(name='Income📈', value=f"${data.get('income', 0)}")
+        embed.add_field(name='Occupation', value=f"{data.get('occupation')}")
+        embed.add_field(name=u'\u200b', value=u'\u200b')
+
 
         return embed
     else:
