@@ -113,7 +113,7 @@ class Players:
         name = job.get('name')
 
         if char['occupation']:
-            return f'You are already a {name}'
+            return f'You are already a {char.get("occupation")}'
 
         char['occupation'] = name
         char['income'] += income
