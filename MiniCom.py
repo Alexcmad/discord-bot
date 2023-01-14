@@ -13,6 +13,23 @@ from discord import Embed
 adult = 18
 
 
+class Jobs:
+    def __init__(self, db_file):
+        self.db = TinyDB(db_file)
+        self.job_data = self.db.table('job_data')
+        self.Job = Query()
+
+    def add_job(self, data):
+        self.job_data.insert(data)
+        return 'Job Added Successfully'
+
+    def get_job(self, ID):
+        return self.job_data.search(self.Job.id == ID)[0]
+
+    def job_list(self):
+        return self.job_data.all()
+
+
 class Players:
     def __init__(self, db_file):
         self.db = TinyDB(db_file)
@@ -64,17 +81,20 @@ class Players:
         for char in self.db.all():
             char_exp = self.exponent ** char['age']  # Calculate the exponential value (age decay)
             decay = (char_exp + self.health_decay - 1.05)  # Calculate the total amount to subtract from health
-            char['health'] = round(100 - decay, 1)  # Subtract decay from health and round to one decimal place
+            char['health'] = 100 - decay, 1  # Subtract decay from max health
 
-            expenses = char.setdefault('expenses', 0)
-            income = char.setdefault('income', 0)
-            char['money'] = char['money'] - expenses + income
+            # add health benefit in the future
+
+            if char.setdefault('alive', True):
+                expenses = char.get('expenses', 0)
+                income = char.get('income', 0)
+                char['money'] = char['money'] - expenses + income
             self.update_player(char['id'], char)
 
-            if char['health'] <= 0 and char.setdefault('alive', True):
+            if char['health'] <= 0 and char['alive']:
                 notice.append(self.kill(char['id'], ['Old Age']))
 
-            if char['age'] >= adult and not char.setdefault('adult', False):
+            if char['age'] >= adult and not char.get('adult', False):
                 notice.append(self.adulthood(char['id']))
 
         return notice
@@ -85,20 +105,44 @@ class Players:
         char = self.get_player(ID)['name']
         return f"{char} Has Died from {means}"
 
-    """def deteriorate(self):
-        self.db.update({'health':})"""
+    def get_job(self, ID, job_ID):
+        char = self.get_player(ID)
+        job = jobs.get_job(job_ID)
+
+        income = job.get('salary')
+        name = job.get('name')
+
+        if char['occupation']:
+            return f'You are already a {name}'
+
+        char['occupation'] = name
+        char['income'] += income
+        self.update_player(ID, char)
+        return f"Congratulations! {char['name']} is now a {name}! +${income} Income"
 
 
 players = Players(db_file='minicom.json')
+jobs = Jobs(db_file='minicom.json')
 
 
 def new_player(ID, name, gender):
     if players.get_player(ID):
         return 'You Already Have a Character'
     else:
-        data = {'id': ID, 'name': name, 'age': 0, 'gender': gender, 'money': 0, 'health': 100}
+        data = {'id': ID, 'name': name, 'age': 0,
+                'adult': False, 'gender': gender,
+                'money': 0, 'health': 100,
+                'alive': True, 'occupation': None,
+                'expenses': 0, 'income': 0}
         players.add_player(data)
         return f"Character {name} added Successfully"
+
+
+def new_job(salary, name):
+    ID = jobs.job_data.search(jobs.Job.current_id > -1)[0]['current_id']
+    data = {'id': ID, 'name': name, 'salary': salary}
+    jobs.job_data.update({'current_id': (ID + 1)}, jobs.Job.current_id > -1)
+    jobs.add_job(data)
 
 
 def view_player(ID):
@@ -114,10 +158,10 @@ def view_player(ID):
         embed.add_field(name='Age', value=data['age'])
         embed.add_field(name=u'\u200b', value=u'\u200b')
         embed.add_field(name='Sex', value=data['gender'])
-        embed.add_field(name='Health', value=health)
+        embed.add_field(name='Health', value=round(health, 1))
         embed.add_field(name=u'\u200b', value=u'\u200b')
-        embed.add_field(name='Money', value=f"${data['money']}")
-        embed.add_field(name='Expenses', value=f"${data.setdefault('expenses', 0)}")
+        embed.add_field(name='Money', value=f"${round(data['money'], 2)}")
+        embed.add_field(name='Expenses', value=f"${data.get('expenses', 0)}")
         embed.add_field(name=u'\u200b', value=u'\u200b')
 
         return embed

@@ -543,7 +543,7 @@ async def on_voice_state_update(member, before, after):
             file = discord.FFmpegPCMAudio(f'Suck yuh modda ({filet}).m4a')
             vc.play(file)
             if filet != 4:
-                await asyncio.sleep(2.5)
+                await asyncio.sleep(3)
             else:
                 await asyncio.sleep(7)
             await vc.disconnect()
@@ -631,6 +631,18 @@ async def year():
                       description="Delete your character")
 async def delete(ctx):
     await ctx.respond(f"```{MiniCom.players.remove_Player(ctx.user.id)}```")
+
+
+@client.slash_command(name='apply', guild_ids=[hearth],
+                      description="Apply for a Job")
+async def apply(ctx, id: discord.Option(str, name='id', required=True, description="Job ID")):
+    ctx.respond(f"```{MiniCom.players.get_job(ctx.user.id,id)}```")
+
+
+@client.slash_command(name='job-list', guild_ids=[hearth],
+                      description='View a list of jobs')
+async def job_list(ctx):
+    pass
 
 
 client.run(bot.TOKEN)
