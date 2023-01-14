@@ -91,7 +91,7 @@ class Players:
                 char['money'] = char['money'] - expenses + income
             self.update_player(char['id'], char)
 
-            if char['health'] <= 0 and char['alive']:
+            if char['health'] and char['alive']:
                 notice.append(self.kill(char['id'], ['Old Age']))
 
             if char['age'] >= adult and not char.get('adult', False):
