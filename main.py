@@ -11,10 +11,12 @@ import nacl
 import youtube_dl
 import ffmpeg
 import MiniCom
+import nickCycle
 
 intents = discord.Intents.all()
 intents.voice_states = True
 intents.guilds = True
+intents.members = True
 client = commands.Bot(intents=intents)
 lastMessage = None
 edited = False
@@ -92,6 +94,7 @@ async def on_ready():
     guilds = client.guilds
     lol_reload.start()
     year.start()
+    cycle.start()
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Hentai"))
 
     for x in guilds:
@@ -627,6 +630,19 @@ async def year():
             await slave.send(f"```{msg}```")
 
 
+@discord.ext.tasks.loop(seconds=10, reconnect=True)
+async def cycle():
+    updates = (nickCycle.cycle_nicks())
+    for update in updates:
+        mID = update[0]
+        new_nick = update[1]
+        member = client.guilds[0].get_member(mID)
+        try:
+            await member.edit(nick=new_nick)
+        except discord.errors.Forbidden:
+            print(f"No Perms to change {member} nick")
+
+
 @client.slash_command(name='delete', guild_ids=[hearth],
                       description="Delete your character")
 async def delete(ctx):
@@ -636,13 +652,41 @@ async def delete(ctx):
 @client.slash_command(name='apply', guild_ids=[hearth],
                       description="Apply for a Job")
 async def apply(ctx, id: discord.Option(int, name='id', required=True, description="Job ID")):
-    await ctx.respond(f"```{MiniCom.players.get_job(ctx.user.id,id)}```")
+    await ctx.respond(f"```{MiniCom.players.get_job(ctx.user.id, id)}```")
 
 
 @client.slash_command(name='job-list', guild_ids=[hearth],
                       description='View a list of jobs')
 async def job_list(ctx):
     pass
+
+
+@client.slash_command(name='add-nick', guild_ids=[hearth],
+                      description='Add a nickname to your cycle')
+async def add_nick(ctx, nick: discord.Option(str, name='nick', required=True, description="Nick to add")):
+    user_id = ctx.user.id
+    await ctx.respond(f"```{nickCycle.add_nick(user_id, nick)}```")
+
+
+@client.slash_command(name='remove-nick', guild_ids=[hearth],
+                      description='Remove a nickname from your cycle')
+async def add_nick(ctx, nick: discord.Option(str, name='nick', required=True, description="Nick to remove")):
+    user_id = ctx.user.id
+    await ctx.respond(f"```{nickCycle.remove_nick(user_id, nick)}```")
+
+
+@client.slash_command(name='cycle', guild_ids=[hearth],
+                      description='Toggle your nick cycle on or off')
+async def cycle_toggle(ctx):
+    user_id = ctx.user.id
+    await ctx.respond(f"```{nickCycle.toggle(user_id)}```")
+
+
+@client.slash_command(name='nicks', guild_ids=[hearth],
+                      description='Remove a nickname from your cycle')
+async def add_nick(ctx):
+    user_id = ctx.user.id
+    await ctx.respond(f"```{nickCycle.get_nicks(user_id)}```")
 
 
 client.run(bot.TOKEN)
