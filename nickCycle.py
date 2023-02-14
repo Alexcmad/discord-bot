@@ -48,14 +48,14 @@ def remove_nick(user_id, nick: str):
 
 def cycle_nicks():
     user_nicks.update(dbop.increment("idx"), user.nicks != [])
-    user_nicks.update({"cycle": False}, user.nicks == [])
+    # user_nicks.update({"cycle": False}, user.nicks == [])
     to_update = []
     for i in user_nicks:
         idx = i["idx"]
         if len(i['nicks']) <= idx:
             idx = 0
             user_nicks.update({"idx":0},user.id == i['id'])
-        if i["cycle"]:
+        if i["nicks"] and i["cycle"]:
             to_update.append((i['id'], get_nicks(i['id'])[idx]))
 
     return to_update
@@ -69,3 +69,9 @@ def toggle(user_id):
     else:
         user_nicks.update({'cycle': True}, user.id == user_id)
         return "Your nicks will now cycle"
+
+
+def remove_all(user_id):
+    is_user(user_id)
+    user_nicks.update({"nicks": []}, user.id == user_id)
+    return "All nicks removed"

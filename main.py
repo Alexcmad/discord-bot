@@ -670,7 +670,7 @@ async def add_nick(ctx, nick: discord.Option(str, name='nick', required=True, de
 
 @client.slash_command(name='remove-nick', guild_ids=[hearth],
                       description='Remove a nickname from your cycle')
-async def add_nick(ctx, nick: discord.Option(str, name='nick', required=True, description="Nick to remove")):
+async def rem_nick(ctx, nick: discord.Option(str, name='nick', required=True, description="Nick to remove")):
     user_id = ctx.user.id
     await ctx.respond(f"```{nickCycle.remove_nick(user_id, nick)}```")
 
@@ -683,10 +683,17 @@ async def cycle_toggle(ctx):
 
 
 @client.slash_command(name='nicks', guild_ids=[hearth],
-                      description='Remove a nickname from your cycle')
-async def add_nick(ctx):
+                      description='View all your nicks')
+async def view_nick(ctx):
     user_id = ctx.user.id
     await ctx.respond(f"```{nickCycle.get_nicks(user_id)}```")
+
+
+@client.slash_command(name='remove-all', guild_ids=[hearth],
+                      description='Delete all your nicks')
+async def del_nick(ctx):
+    user_id = ctx.user.id
+    await ctx.respond(f"```{nickCycle.remove_all(user_id)}```")
 
 
 client.run(bot.TOKEN)
