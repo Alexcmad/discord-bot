@@ -52,7 +52,7 @@ sorts = ["l_wins",
          "count",
          "counted"
          ]
-genders = ("Male", "Female", "Attack Helicopter", "Dog", "Saggitarus", "Nigga", "Bitch", "Hoe", "Dumbass", "Racist")
+genders = ("Male", "Female", "Attack Helicopter", "Dog", "Saggitarus")
 
 birds = ["🦃", "🐔", "🐓", "🐣", "🐤", "🐥", "🐦", "🦆", "🐧"]
 idx = 1
@@ -95,7 +95,7 @@ async def on_ready():
     lol_reload.start()
     year.start()
     cycle.start()
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Hentai"))
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Anime"))
 
     for x in guilds:
         bot.is_server(x)
@@ -138,8 +138,8 @@ async def on_message(message):
         if not is_cChat:
             if not is_qChat:
                 if random.randint(0, 4) == 1:
-                    sym = random.randint(0, 9)
-                    if sym == 1:
+                    chance = random.randint(0, 9)
+                    if chance == 1:
                         await message.add_reaction('🇸')
                         await message.add_reaction('🇾')
                         await message.add_reaction('🇲')
@@ -538,18 +538,6 @@ async def on_voice_state_update(member, before, after):
 
             await general.send('https://tenor.com/view/tyra-banks-be-quiet-tiffany-bye-gif-8741675')
 
-    if member.id == bird:
-        if after.channel and not before.channel:
-            await asyncio.sleep(1)
-            vc = await after.channel.connect(timeout=2)
-            filet = random.randint(0, 4)
-            file = discord.FFmpegPCMAudio(f'Suck yuh modda ({filet}).m4a')
-            vc.play(file)
-            if filet != 4:
-                await asyncio.sleep(3)
-            else:
-                await asyncio.sleep(7)
-            await vc.disconnect()
     if member.id == doss:
         if after.channel and not before.channel:
             await general.send("Beighbeigh")

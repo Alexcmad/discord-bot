@@ -1,4 +1,6 @@
 from tinydb import TinyDB, Query
+
+import os
 import tinydb.operations as dbop
 import discord
 import discord.ext.tasks
@@ -21,8 +23,9 @@ def to_thread(func: typing.Callable) -> typing.Coroutine:
     return wrapper
 
 
-TOKEN = 'MTA0MDEyNTQ0MTQyOTczMzM3Ng.GSict-.sdYFNSpiPiTJVu33Ak2rcywbADqz3ukkETIOKg'
-RIOT = 'RGAPI-2587d2a1-9566-4760-b3b6-ef1c020787d7'
+TOKEN = os.environ.get('DISCORDTOKEN')
+print(TOKEN)
+RIOT = os.environ.get('RIOT')
 region = 'NA1'
 watcher = LolWatcher(api_key=RIOT)
 
@@ -72,8 +75,6 @@ def add_user(user):
             "l_quadras": 0,
             "guessed_songs": 0
             }
-
-
 
 
 def is_server(server):
@@ -582,7 +583,7 @@ def guessed(user):
 
 
 def add_manga(manga, added_by):
-    mangas.insert({"title":manga, "added":added_by})
+    mangas.insert({"title": manga, "added": added_by})
     return f"`{str.title(manga)}` Added"
 
 
@@ -596,7 +597,7 @@ def load_manga(manga, added_by):
             add_manga(m, added_by)
     else:
         print(f"Title: {manga} Added by: {added_by}")
-        add_manga(manga,added_by)
+        add_manga(manga, added_by)
 
 
 def get_manga_list():
